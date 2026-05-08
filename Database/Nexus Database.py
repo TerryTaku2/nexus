@@ -25,7 +25,8 @@ def create_database(db_path="Nexus.db"):
             employees INTEGER,
             years_active INTEGER,
             email TEXT NOT NULL UNIQUE,
-            password TEXT NOT NULL
+            password TEXT NOT NULL,
+            last_seen TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
     """)
 
