@@ -24,7 +24,7 @@ class LoginRequest(BaseModel):
     email: EmailStr
     password: str
 
-@app.post("/login")
+@app.post("/signup")
 async def sign_in(login_data: LoginRequest):
     conn = sqlite3.connect("chat_app.db")
     conn.row_factory = sqlite3.Row
@@ -50,7 +50,7 @@ async def sign_in(login_data: LoginRequest):
         conn.close()
 
 
-@app.post("/signup")
+@app.post("/create_account")
 async def create_account(user_data: SignupRequest):
     conn = sqlite3.connect("chat_app.db")
     conn.row_factory = sqlite3.Row
