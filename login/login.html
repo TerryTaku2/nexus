@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeXus - SME Network · Finance · Growth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ============ RESET ============ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ============ VARIABLES ============ */
+        :root {
+            --neXus-navy: #1e3a5f;
+            --neXus-navy-dark: #152d4a;
+            --neXus-gold: #c8963e;
+            --neXus-gold-light: #d4a853;
+            --neXus-gradient: linear-gradient(135deg, #1e3a5f, #2c5282);
+            --bg: #f0f4f8;
+            --card-bg: #ffffff;
+            --text: #1a202c;
+            --text-light: #4a5568;
+            --border: #cbd5e0;
+            --input-bg: #f7fafc;
+            --input-focus: #ebf4ff;
+            --shadow: 0 4px 24px rgba(30, 58, 95, 0.10);
+            --radius: 18px;
+            --radius-sm: 12px;
+        }
+
+        body {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            background-image: 
+                radial-gradient(circle at 15% 25%, rgba(30, 58, 95, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 85% 75%, rgba(200, 150, 62, 0.05) 0%, transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ============ CONTAINER ============ */
+        .container {
+            width: 100%;
+            max-width: 440px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============ LOGO ============ */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .neXus-logo {
+            font-family: 'Fredoka One', 'Nunito', cursive;
+            font-size: 48px;
+            font-weight: 800;
+            background: var(--neXus-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            filter: drop-shadow(0 2px 4px rgba(30, 58, 95, 0.15));
+        }
+
+        .tagline {
+            font-size: 13px;
+            color: var(--text-light);
+            letter-spacing: 0.04em;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .tagline .dot {
+            color: var(--neXus-gold);
+            font-weight: 800;
+        }
+
+        /* ============ CARD ============ */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(30, 58, 95, 0.08);
+        }
+
+        /* ============ TABS ============ */
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 24px;
+            background: #e2e8f0;
+            border-radius: 30px;
+            padding: 4px;
+            position: relative;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 11px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 28px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: all 0.25s;
+            font-family: 'Nunito', sans-serif;
+            position: relative;
+            z-index: 1;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: var(--neXus-navy);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        /* ============ FORMS ============ */
+        .form-panel {
+            display: none;
+            animation: fadeSlideIn 0.3s ease;
+        }
+
+        .form-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 5px;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        .form-group label .required {
+            color: var(--neXus-gold);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            color: var(--text);
+            background: var(--input-bg);
+            transition: all 0.2s;
+            outline: none;
+            font-family: 'Nunito', sans-serif;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .form-group select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234a5568' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+            cursor: pointer;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--neXus-navy);
+            box-shadow: 0 0 0 3.5px rgba(30, 58, 95, 0.08);
+            background: var(--input-focus);
+        }
+
+        .form-group input::placeholder {
+            color: #a0aec0;
+        }
+
+        /* ============ PASSWORD WRAPPER ============ */
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 44px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a0aec0;
+            border-radius: 8px;
+            transition: color 0.2s;
+        }
+
+        .toggle-password:hover {
+            color: var(--neXus-navy);
+        }
+
+        .toggle-password svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ============ FORGOT LINK ============ */
+        .forgot-link {
+            display: block;
+            text-align: right;
+            margin-top: -8px;
+            margin-bottom: 16px;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--neXus-gold);
+            text-decoration: none;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+            color: var(--neXus-gold-light);
+        }
+
+        /* ============ ERROR FIELD ============ */
+        .form-group.error input,
+        .form-group.error select {
+            border-color: #fc8181;
+            background: #fff5f5;
+        }
+
+        .field-error {
+            color: #e53e3e;
+            font-size: 11.5px;
+            font-weight: 600;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .form-group.error .field-error {
+            display: block;
+        }
+
+        /* ============ BUTTON ============ */
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--neXus-gradient);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Nunito', sans-serif;
+            letter-spacing: 0.02em;
+            margin-top: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(30, 58, 95, 0.3);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.97);
+        }
+
+        .btn-submit.loading {
+            pointer-events: none;
+            opacity: 0.85;
+        }
+
+        .btn-submit.loading::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            margin-top: -10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ============ TOAST ============ */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            background: var(--neXus-navy);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 1000;
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 90vw;
+            border-left: 4px solid var(--neXus-gold);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.success {
+            background: #1e3a5f;
+            border-left-color: #48bb78;
+        }
+
+        .toast.error {
+            background: #1e3a5f;
+            border-left-color: #fc8181;
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 480px) {
+            .card {
+                padding: 22px 16px;
+                border-radius: 14px;
+            }
+
+            .neXus-logo {
+                font-size: 38px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .tab-btn {
+                font-size: 13px;
+                padding: 10px 12px;
+            }
+
+            .btn-submit {
+                padding: 13px;
+                font-size: 14px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .card {
+                padding: 32px 30px;
+            }
+
+            .neXus-logo {
+                font-size: 52px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Main Container -->
+    <div class="container">
+
+        <!-- Logo -->
+        <div class="logo-section">
+            <h1 class="neXus-logo">NeXus</h1>
+            <p class="tagline">SME Network <span class="dot">·</span> Finance <span class="dot">·</span> Growth</p>
+        </div>
+
+        <!-- Card -->
+        <div class="card">
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="signin">Sign In</button>
+                <button class="tab-btn" data-tab="signup">Create Account</button>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- SIGN IN FORM                                -->
+            <!-- ============================================ -->
+            <div class="form-panel active" id="signin-panel">
+                <form id="signinForm" novalidate>
+
+                    <div class="form-group" id="signin-email-group">
+                        <label for="signin-email">Email</label>
+                        <input type="email" id="signin-email" placeholder="you@example.com" autocomplete="email" required>
+                        <span class="field-error">Please enter a valid email address</span>
+                    </div>
+
+                    <div class="form-group" id="signin-password-group">
+                        <label for="signin-password">Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="signin-password" placeholder="••••••••" autocomplete="current-password" required minlength="6">
+                            <button type="button" class="toggle-password" data-target="signin-password" aria-label="Toggle password visibility">
+                                <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg class="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <span class="field-error">Password must be at least 6 characters</span>
+                    </div>
+
+                    <a href="#" class="forgot-link">Forgot password?</a>
+
+                    <button type="submit" class="btn-submit" id="signinBtn">Sign In</button>
+                </form>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- SIGN UP FORM                                -->
+            <!-- ============================================ -->
+            <div class="form-panel" id="signup-panel">
+                <form id="signupForm" novalidate>
+
+                    <div class="form-group" id="business-name-group">
+                        <label for="business-name">Business Name <span class="required">*</span></label>
+                        <input type="text" id="business-name" placeholder="Your business name" required>
+                        <span class="field-error">Please enter your business name</span>
+                    </div>
+
+                    <div class="form-group" id="owner-name-group">
+                        <label for="owner-name">Owner Name <span class="required">*</span></label>
+                        <input type="text" id="owner-name" placeholder="Full name" required>
+                        <span class="field-error">Please enter the owner name</span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" id="city-group">
+                            <label for="city">City <span class="required">*</span></label>
+                            <input type="text" id="city" placeholder="e.g. Harare" required>
+                            <span class="field-error">Please enter your city</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="employees">Employees</label>
+                            <select id="employees">
+                                <option value="">Select</option>
+                                <option value="1">1</option>
+                                <option value="2-5">2 - 5</option>
+                                <option value="6-10">6 - 10</option>
+                                <option value="11-20">11 - 20</option>
+                                <option value="20+">20+</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="signup-email-group">
+                        <label for="signup-email">Email <span class="required">*</span></label>
+                        <input type="email" id="signup-email" placeholder="you@example.com" required>
+                        <span class="field-error">Please enter a valid email address</span>
+                    </div>
+
+                    <div class="form-group" id="signup-password-group">
+                        <label for="signup-password">Password <span class="required">*</span></label>
+                        <div class="password-wrapper">
+                            <input type="password" id="signup-password" placeholder="Min 6 characters" required minlength="6">
+                            <button type="button" class="toggle-password" data-target="signup-password" aria-label="Toggle password visibility">
+                                <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg class="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <span class="field-error">Password must be at least 6 characters</span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" id="phone-group">
+                            <label for="phone">Phone <span class="required">*</span></label>
+                            <input type="tel" id="phone" placeholder="+263..." required>
+                            <span class="field-error">Please enter your phone number</span>
+                        </div>
+                        <div class="form-group" id="sector-group">
+                            <label for="sector">Sector <span class="required">*</span></label>
+                            <select id="sector" required>
+                                <option value="">Select sector</option>
+                                <option value="retail">Retail</option>
+                                <option value="agriculture">Agriculture</option>
+                                <option value="technology">Technology</option>
+                                <option value="manufacturing">Manufacturing</option>
+                                <option value="services">Services</option>
+                                <option value="construction">Construction</option>
+                                <option value="finance">Finance</option>
+                                <option value="healthcare">Healthcare</option>
+                                <option value="education">Education</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <span class="field-error">Please select your business sector</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reg-number">Registration No.</label>
+                            <input type="text" id="reg-number" placeholder="Optional">
+                        </div>
+                        <div class="form-group">
+                            <label for="years-active">Years Active</label>
+                            <select id="years-active">
+                                <option value="">Select</option>
+                                <option value="<1">Less than 1</option>
+                                <option value="1-2">1 - 2</option>
+                                <option value="3-5">3 - 5</option>
+                                <option value="5-10">5 - 10</option>
+                                <option value="10+">10+</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="signupBtn">Create Account</button>
+                </form>
+            </div>
+
+        </div><!-- /card -->
+    </div><!-- /container -->
+
+
+    <!-- ============================================ -->
+    <!-- JAVASCRIPT — Python Backend Ready            -->
+    <!-- ============================================ -->
+    <script>
+        // ============================================
+        // 🔧 CONFIGURATION — Change this to your Python backend URL
+        // ============================================
+        var API_BASE_URL = 'http://localhost:5000/api';
+
+        // ============ TAB SWITCHING ============
+        var tabBtns = document.querySelectorAll('.tab-btn');
+        var panels = document.querySelectorAll('.form-panel');
+
+        tabBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var target = this.getAttribute('data-tab');
+
+                tabBtns.forEach(function(b) { b.classList.remove('active'); });
+                this.classList.add('active');
+
+                panels.forEach(function(p) { p.classList.remove('active'); });
+                document.getElementById(target + '-panel').classList.add('active');
+            });
+        });
+
+        // ============ PASSWORD TOGGLE ============
+        document.querySelectorAll('.toggle-password').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var targetId = this.getAttribute('data-target');
+                var input = document.getElementById(targetId);
+                var eyeOpen = this.querySelector('.eye-open');
+                var eyeClosed = this.querySelector('.eye-closed');
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    eyeOpen.style.display = 'none';
+                    eyeClosed.style.display = 'block';
+                } else {
+                    input.type = 'password';
+                    eyeOpen.style.display = 'block';
+                    eyeClosed.style.display = 'none';
+                }
+            });
+        });
+
+        // ============ TOAST ============
+        function showToast(message, type) {
+            var toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(function() {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // ============ CLEAR ALL ERRORS ============
+        function clearErrors() {
+            document.querySelectorAll('.form-group.error').forEach(function(group) {
+                group.classList.remove('error');
+            });
+        }
+
+        // ============ SHOW FIELD ERROR ============
+        function showFieldError(groupId) {
+            var group = document.getElementById(groupId);
+            if (group) {
+                group.classList.add('error');
+            }
+        }
+
+        // ============ API HELPER ============
+        function apiCall(endpoint, data, successCallback) {
+            var url = API_BASE_URL + endpoint;
+
+            var headers = {
+                'Content-Type': 'application/json',
+            };
+
+            var authToken = localStorage.getItem('nexus_token');
+            if (authToken) {
+                headers['Authorization'] = 'Bearer ' + authToken;
+            }
+
+            fetch(url, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(data)
+            })
+            .then(function(response) {
+                var contentType = response.headers.get('content-type');
+                if (contentType && contentType.indexOf('application/json') !== -1) {
+                    return response.json().then(function(json) {
+                        return { status: response.status, body: json };
+                    });
+                } else {
+                    return response.text().then(function(text) {
+                        return { status: response.status, body: { message: text } };
+                    });
+                }
+            })
+            .then(function(result) {
+                successCallback(result.status, result.body);
+            })
+            .catch(function(error) {
+                console.error('API Error:', error);
+                showToast('Network error. Please check your connection and try again.', 'error');
+            });
+        }
+
+        // ============================================
+        // 🔌 SIGN IN — Python Backend
+        // ============================================
+        document.getElementById('signinForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            clearErrors();
+
+            var email = document.getElementById('signin-email').value.trim();
+            var password = document.getElementById('signin-password').value;
+            var btn = document.getElementById('signinBtn');
+
+            var hasError = false;
+            if (!email || email.indexOf('@') === -1 || email.indexOf('.') === -1) {
+                showFieldError('signin-email-group');
+                hasError = true;
+            }
+            if (!password || password.length < 6) {
+                showFieldError('signin-password-group');
+                hasError = true;
+            }
+            if (hasError) return;
+
+            btn.classList.add('loading');
+            btn.textContent = 'Signing in...';
+
+            apiCall('/auth/login', {
+                email: email,
+                password: password
+            }, function(status, data) {
+                btn.classList.remove('loading');
+                btn.textContent = 'Sign In';
+
+                if (status === 200 && data.success) {
+                    if (data.token) {
+                        localStorage.setItem('nexus_token', data.token);
+                    }
+                    if (data.user) {
+                        localStorage.setItem('nexus_user', JSON.stringify(data.user));
+                    }
+
+                    showToast('Welcome back! Redirecting...', 'success');
+
+                    setTimeout(function() {
+                        window.location.href = data.redirect || '/dashboard';
+                    }, 1000);
+
+                } else if (status === 401) {
+                    showToast(data.message || 'Invalid email or password', 'error');
+                } else if (status === 403) {
+                    showToast(data.message || 'Account not verified. Please check your email.', 'error');
+                } else if (status === 429) {
+                    showToast('Too many attempts. Please try again later.', 'error');
+                } else {
+                    showToast(data.message || 'Login failed. Please try again.', 'error');
+                }
+            });
+        });
+
+        // ============================================
+        // 🔌 SIGN UP — Python Backend  (AUTO-REDIRECT TO DASHBOARD)
+        // ============================================
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            clearErrors();
+
+            var businessName = document.getElementById('business-name').value.trim();
+            var ownerName = document.getElementById('owner-name').value.trim();
+            var city = document.getElementById('city').value.trim();
+            var employees = document.getElementById('employees').value;
+            var email = document.getElementById('signup-email').value.trim();
+            var password = document.getElementById('signup-password').value;
+            var phone = document.getElementById('phone').value.trim();
+            var sector = document.getElementById('sector').value;
+            var regNumber = document.getElementById('reg-number').value.trim();
+            var yearsActive = document.getElementById('years-active').value;
+            var btn = document.getElementById('signupBtn');
+
+            var hasError = false;
+            if (!businessName) { showFieldError('business-name-group'); hasError = true; }
+            if (!ownerName) { showFieldError('owner-name-group'); hasError = true; }
+            if (!city) { showFieldError('city-group'); hasError = true; }
+            if (!email || email.indexOf('@') === -1 || email.indexOf('.') === -1) { showFieldError('signup-email-group'); hasError = true; }
+            if (!password || password.length < 6) { showFieldError('signup-password-group'); hasError = true; }
+            if (!phone) { showFieldError('phone-group'); hasError = true; }
+            if (!sector) { showFieldError('sector-group'); hasError = true; }
+            if (hasError) return;
+
+            btn.classList.add('loading');
+            btn.textContent = 'Creating account...';
+
+            apiCall('/auth/register', {
+                business_name: businessName,
+                owner_name: ownerName,
+                city: city,
+                employees: employees,
+                email: email,
+                password: password,
+                phone: phone,
+                sector: sector,
+                registration_number: regNumber,
+                years_active: yearsActive
+            }, function(status, data) {
+                btn.classList.remove('loading');
+                btn.textContent = 'Create Account';
+
+                if (status === 201 || (status === 200 && data.success)) {
+
+                    // ✅ Auto-login after registration: store token and user data
+                    if (data.token) {
+                        localStorage.setItem('nexus_token', data.token);
+                    }
+                    if (data.user) {
+                        localStorage.setItem('nexus_user', JSON.stringify(data.user));
+                    }
+
+                    showToast('Account created! Redirecting to dashboard...', 'success');
+
+                    // ✅ Redirect directly to dashboard (no Sign In tab required)
+                    setTimeout(function() {
+                        window.location.href = data.redirect || '/dashboard';
+                    }, 1200);
+
+                } else if (status === 409) {
+                    showToast(data.message || 'An account with this email already exists.', 'error');
+                    showFieldError('signup-email-group');
+                } else if (status === 422) {
+                    if (data.errors) {
+                        for (var field in data.errors) {
+                            showToast(data.errors[field], 'error');
+                        }
+                    } else {
+                        showToast(data.message || 'Please check your information.', 'error');
+                    }
+                } else {
+                    showToast(data.message || 'Registration failed. Please try again.', 'error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
