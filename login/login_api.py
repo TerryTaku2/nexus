@@ -26,7 +26,7 @@ class LoginRequest(BaseModel):
 
 @app.post("/signup")
 async def sign_in(login_data: LoginRequest):
-    conn = sqlite3.connect("chat_app.db")
+    conn = sqlite3.connect("Database/Nexus.db")
     conn.row_factory = sqlite3.Row
 
     try:
@@ -52,7 +52,7 @@ async def sign_in(login_data: LoginRequest):
 
 @app.post("/create_account")
 async def create_account(user_data: SignupRequest):
-    conn = sqlite3.connect("chat_app.db")
+    conn = sqlite3.connect("Database/Nexus.db")
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
