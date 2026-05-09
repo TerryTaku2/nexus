@@ -110,6 +110,51 @@ def create_database(db_path="Nexus.db"):
         ON Group_Members(group_id)
     """)
 
+    # Create Posts table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Posts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            author_id INTEGER NOT NULL,
+            content TEXT NOT NULL,
+            time_posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (author_id) REFERENCES Users(ID)
+        )
+    """)
+
+    # Create Updates table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Updates (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            update_text TEXT NOT NULL,
+            time_posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES Users(ID)
+        )
+    """)
+
+    # Create SMEs table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS SMEs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            category TEXT,
+            latitude REAL,
+            longitude REAL
+        )
+    """)
+
+    # Create Followers table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Followers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            target_id INTEGER NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES Users(ID),
+            FOREIGN KEY (target_id) REFERENCES Users(ID),
+            UNIQUE(user_id, target_id)
+        )
+    """)
+
     conn.commit()
     conn.close()
 
