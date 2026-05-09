@@ -456,7 +456,7 @@
 
                     <a href="#" class="forgot-link">Forgot password?</a>
 
-                    <button type="submit" class="btn-submit" id="signinBtn">Sign In</button>
+                    <button type="submit" class="btn-submit" id="signinBtn">LogIn</button>
                 </form>
             </div>
 
@@ -579,7 +579,7 @@
         // ============================================
         // 🔧 CONFIGURATION — Change this to your Python backend URL
         // ============================================
-        var API_BASE_URL = 'http://localhost:5000/api';
+        var API_BASE_URL = 'http://localhost:8000/api';
 
         // ============ TAB SWITCHING ============
         var tabBtns = document.querySelectorAll('.tab-btn');
@@ -706,14 +706,14 @@
             if (hasError) return;
 
             btn.classList.add('loading');
-            btn.textContent = 'Signing in...';
+            btn.textContent = 'Logging in...';
 
             apiCall('/auth/login', {
                 email: email,
                 password: password
             }, function(status, data) {
                 btn.classList.remove('loading');
-                btn.textContent = 'Sign In';
+                btn.textContent = 'Log In';
 
                 if (status === 200 && data.success) {
                     if (data.token) {
