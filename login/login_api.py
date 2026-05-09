@@ -1,11 +1,19 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
+from fastapi.middleware.cors import CORSMiddleware
 import sqlite3
 from datetime import datetime
 
 app = FastAPI(title="Login API")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 class SignupRequest(BaseModel):
     business_name: str = Field(..., min_length=2, max_length=100)
@@ -24,7 +32,7 @@ class LoginRequest(BaseModel):
     email: EmailStr
     password: str
 
-@app.post("/signup")
+@app.post("/sign_in")
 async def sign_in(login_data: LoginRequest):
     conn = sqlite3.connect("Database/Nexus.db")
     conn.row_factory = sqlite3.Row
