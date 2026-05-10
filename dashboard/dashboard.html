@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeXus - SME Network</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ============ RESET ============ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ============ VARIABLES ============ */
+        :root {
+            --neXus-navy: #1e3a5f;
+            --neXus-navy-dark: #152d4a;
+            --neXus-navy-light: #2c5282;
+            --neXus-gold: #c8963e;
+            --neXus-gold-light: #d4a853;
+            --neXus-gold-pale: #fef9f0;
+            --neXus-gradient: linear-gradient(135deg, #1e3a5f, #2c5282);
+            --bg: #f0f4f8;
+            --card-bg: #ffffff;
+            --text: #1a202c;
+            --text-light: #4a5568;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow: 0 4px 16px rgba(30, 58, 95, 0.08);
+            --shadow-lg: 0 8px 30px rgba(30, 58, 95, 0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --sidebar-width: 260px;
+            --header-height: 64px;
+        }
+
+        body {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ============ SIDEBAR ============ */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--neXus-navy);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-logo .neXus-text {
+            font-family: 'Fredoka One', cursive;
+            font-size: 28px;
+            background: linear-gradient(135deg, #ffffff, #c8963e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .sidebar-logo .neXus-sub {
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 600;
+            transition: all 0.2s;
+            letter-spacing: 0.01em;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        .sidebar-nav a.active {
+            background: rgba(200, 150, 62, 0.2);
+            color: var(--neXus-gold-light);
+            border-left: 3px solid var(--neXus-gold);
+        }
+
+        .sidebar-nav a svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            opacity: 0.8;
+        }
+
+        .sidebar-footer {
+            padding: 16px 12px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .sidebar-footer a:hover {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fc8181;
+        }
+
+        /* ============ HEADER ============ */
+        .header {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: var(--header-height);
+            background: white;
+            border-bottom: 1px solid var(--border);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            transition: left 0.3s ease;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-toggle {
+            display: none;
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 20px;
+        }
+
+        .menu-toggle:hover {
+            background: #f7fafc;
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-icon-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 10px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .header-icon-btn:hover {
+            background: #f7fafc;
+        }
+
+        .header-icon-btn .badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 8px;
+            height: 8px;
+            background: #e53e3e;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--neXus-gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* ============ MAIN CONTENT ============ */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 24px;
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        /* ============ TOP NAV PILLS ============ */
+        .nav-pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .nav-pill {
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-pill.default {
+            background: white;
+            color: var(--text-light);
+            border: 1px solid var(--border);
+        }
+
+        .nav-pill.default:hover {
+            background: #f7fafc;
+        }
+
+        .nav-pill.active {
+            background: var(--neXus-navy);
+            color: white;
+        }
+
+        /* ============ PAGE LAYOUT ============ */
+        .page-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        /* ============ MAIN FEED ============ */
+        .feed-column {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* ============ CHAT BOARD CARD ============ */
+        .section-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .section-card h3 {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-card h3 .icon-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .icon-circle.blue   { background: #ebf4ff; color: #3b82f6; }
+        .icon-circle.green  { background: #f0fff4; color: #48bb78; }
+        .icon-circle.gold   { background: #fffaf0; color: #c8963e; }
+        .icon-circle.purple { background: #faf5ff; color: #8b5cf6; }
+
+        /* ============ CHAT INPUT ============ */
+        .chat-input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input-row input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 25px;
+            font-size: 13px;
+            font-family: 'Nunito', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input-row input:focus {
+            border-color: var(--neXus-navy);
+        }
+
+        .chat-input-row button {
+            padding: 10px 18px;
+            background: var(--neXus-gradient);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .chat-input-row button:hover {
+            opacity: 0.9;
+        }
+
+        /* ============ POST CARDS ============ */
+        .post-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .post-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: white;
+        }
+
+        .post-avatar.avatar-1 { background: #3b82f6; }
+        .post-avatar.avatar-2 { background: #8b5cf6; }
+
+        .post-user {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .post-location {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .post-body {
+            font-size: 13.5px;
+            color: var(--text);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 20px;
+        }
+
+        .post-action {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: var(--text-muted);
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-family: 'Nunito', sans-serif;
+            transition: color 0.2s;
+        }
+
+        .post-action:hover {
+            color: var(--neXus-gold);
+        }
+
+        .post-action svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        /* ============ SIDEBAR RIGHT ============ */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .nearby-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .nearby-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nearby-item:last-child {
+            border-bottom: none;
+        }
+
+        .nearby-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .nearby-avatar.av-1 { background: #48bb78; }
+        .nearby-avatar.av-2 { background: #3b82f6; }
+        .nearby-avatar.av-3 { background: #8b5cf6; }
+        .nearby-avatar.av-4 { background: #c8963e; }
+
+        .nearby-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .nearby-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .nearby-detail {
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .nearby-distance {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--neXus-gold);
+            white-space: nowrap;
+        }
+
+        /* ============ FOLLOWING LIST ============ */
+        .following-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .following-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .following-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #48bb78;
+            flex-shrink: 0;
+        }
+
+        .following-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .following-sector {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* ============ OVERLAY ============ */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 90;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* ============ TOAST ============ */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            background: var(--neXus-navy);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 1000;
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 90vw;
+            border-left: 4px solid var(--neXus-gold);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.success { border-left-color: #48bb78; }
+        .toast.error { border-left-color: #fc8181; }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 1024px) {
+            .page-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .right-column {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+            .header {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .menu-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .nav-pills {
+                gap: 6px;
+            }
+
+            .nav-pill {
+                padding: 6px 14px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .chat-input-row {
+                flex-direction: column;
+            }
+
+            .chat-input-row button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="neXus-text">NeXus</div>
+            <div class="neXus-sub">SME Community Platform</div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="dashboard.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                Dashboard
+            </a>
+            <a href="#" class="active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+                Network
+            </a>
+            <a href="community.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                Finance
+            </a>
+            <a href="#">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Search
+            </a>
+            <a href="#">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                Gov
+            </a>
+            <a href="#">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+                Corp
+            </a>
+            <a href="#">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+                Toolkit
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="#" onclick="handleLogout()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Sign Out
+            </a>
+        </div>
+    </aside>
+
+    <!-- ============ HEADER ============ -->
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+            <span class="header-title">Network</span>
+        </div>
+        <div class="header-right">
+            <button class="header-icon-btn" title="Notifications">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 01-3.46 0"/>
+                </svg>
+                <span class="badge"></span>
+            </button>
+            <div class="user-avatar" id="userAvatar">N</div>
+        </div>
+    </header>
+
+    <!-- ============ MAIN CONTENT ============ -->
+    <main class="main-content">
+
+        <!-- Top Navigation Pills -->
+        <div class="nav-pills">
+            <a href="#" class="nav-pill active">Network</a>
+            <a href="#" class="nav-pill default">Finance</a>
+            <a href="#" class="nav-pill default">Search</a>
+            <a href="#" class="nav-pill default">Gov</a>
+            <a href="#" class="nav-pill default">Corp</a>
+            <a href="#" class="nav-pill default">Toolkit</a>
+        </div>
+
+        <!-- Page Grid: Feed + Right Sidebar -->
+        <div class="page-grid">
+
+            <!-- ============ LEFT: FEED COLUMN ============ -->
+            <div class="feed-column">
+
+                <!-- Chat Board -->
+                <div class="section-card">
+                    <h3>
+                        <span class="icon-circle blue">💬</span>
+                        Chat Board
+                    </h3>
+                    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Connect and chat with other SMEs</p>
+                    <div class="chat-input-row">
+                        <input type="text" id="chatMessage" placeholder="Share something with the community...">
+                        <button onclick="postChat()">Post</button>
+                    </div>
+                    <div id="chatMessages" style="margin-top:12px;font-size:13px;color:var(--text-muted);"></div>
+                </div>
+
+                <!-- Posts & Updates -->
+                <div class="section-card">
+                    <h3>
+                        <span class="icon-circle green">📢</span>
+                        Posts & Updates
+                    </h3>
+                    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">See what others are sharing</p>
+                    
+                    <div id="postsContainer">
+                        <!-- Posts will be loaded here dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ RIGHT: SIDEBAR ============ -->
+            <div class="right-column">
+
+                <!-- Nearby SMEs -->
+                <div class="section-card">
+                    <h3>
+                        <span class="icon-circle gold">📍</span>
+                        Nearby SMEs
+                    </h3>
+                    <p style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">Businesses close to your location</p>
+                    <div class="nearby-list" id="nearbyList">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Following -->
+                <div class="section-card">
+                    <h3>
+                        <span class="icon-circle purple">👥</span>
+                        Following
+                    </h3>
+                    <p style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">SMEs you follow</p>
+                    <div class="following-list" id="followingList">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ============================================
+        // 🔧 CONFIGURATION — Change to your Python backend URL
+        // ============================================
+        var API_BASE_URL = 'http://localhost:5000/api';
+
+        // ============================================
+        // DEMO DATA (Remove when connecting to backend)
+        // ============================================
+        var demoPosts = [
+            { user: 'John M.', avatarClass: 'avatar-1', initials: 'JM', body: 'Just received new stock! Visit my shop for deals 🎉', location: 'Harare CBD', likes: 24 },
+            { user: 'Sarah K.', avatarClass: 'avatar-2', initials: 'SK', body: 'Looking for a supplier of organic vegetables in Harare 🌿', location: 'Borrowdale', likes: 8 }
+        ];
+
+        var demoNearby = [
+            { initials: 'TM', avClass: 'av-1', name: 'Tariro M.', detail: 'Fresh Produce', distance: '0.5 km' },
+            { initials: 'BN', avClass: 'av-2', name: 'Blessing N.', detail: 'Hardware Supplies', distance: '1.2 km' },
+            { initials: 'CM', avClass: 'av-3', name: 'Chipo M.', detail: 'Fashion & Textiles', distance: '2.0 km' },
+            { initials: 'DK', avClass: 'av-4', name: 'Daniel K.', detail: 'IT Services', distance: '2.8 km' }
+        ];
+
+        var demoFollowing = [
+            { name: 'RetailGuru Ltd', sector: 'Retail' },
+            { name: 'AgriPro ZW', sector: 'Agriculture' },
+            { name: 'TechStart Hub', sector: 'Technology' },
+            { name: 'FreshFoods Co', sector: 'Food & Beverage' }
+        ];
+
+        // ============ SIDEBAR TOGGLE ============
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        function closeSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        }
+
+        // ============ TOAST ============
+        function showToast(message, type) {
+            var toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(function() { toast.classList.remove('show'); }, 3500);
+        }
+
+        // ============ LOAD USER ============
+        function loadUser() {
+            var userData = localStorage.getItem('nexus_user');
+            if (userData) {
+                try {
+                    var user = JSON.parse(userData);
+                    if (user.owner_name) {
+                        document.getElementById('userAvatar').textContent = user.owner_name.charAt(0).toUpperCase();
+                    }
+                } catch (e) {}
+            }
+        }
+
+        // ============ API HELPER ============
+        function apiCall(endpoint, method, data, successCallback) {
+            var url = API_BASE_URL + endpoint;
+            var headers = { 'Content-Type': 'application/json' };
+            var token = localStorage.getItem('nexus_token');
+            if (token) { headers['Authorization'] = 'Bearer ' + token; }
+
+            fetch(url, {
+                method: method || 'GET',
+                headers: headers,
+                body: data ? JSON.stringify(data) : null
+            })
+            .then(function(res) {
+                return res.json().then(function(json) { return { status: res.status, body: json }; });
+            })
+            .then(function(result) {
+                successCallback(result.status, result.body);
+            })
+            .catch(function(err) {
+                console.error('API Error:', err);
+            });
+        }
+
+        // ============================================
+        // 🔌 LOAD POSTS — Python Backend
+        // ============================================
+        function loadPosts() {
+            /*
+            apiCall('/network/posts', 'GET', null, function(status, data) {
+                if (status === 200 && data.posts) {
+                    renderPosts(data.posts);
+                }
+            });
+            */
+
+            // ⚠️ DEMO — Remove when backend is connected
+            renderPosts(demoPosts);
+        }
+
+        function renderPosts(posts) {
+            var container = document.getElementById('postsContainer');
+            container.innerHTML = '';
+
+            posts.forEach(function(post) {
+                var card = document.createElement('div');
+                card.className = 'post-card';
+                card.innerHTML = 
+                    '<div class="post-header">' +
+                        '<div class="post-avatar ' + post.avatarClass + '">' + post.initials + '</div>' +
+                        '<div>' +
+                            '<div class="post-user">' + post.user + '</div>' +
+                            '<div class="post-location">📍 ' + post.location + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="post-body">' + post.body + '</div>' +
+                    '<div class="post-actions">' +
+                        '<button class="post-action" onclick="likePost(this, \'' + post.user + '\')">' +
+                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>' +
+                            ' <span>' + post.likes + ' likes</span>' +
+                        '</button>' +
+                        '<button class="post-action">' +
+                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>' +
+                            ' Comment' +
+                        '</button>' +
+                        '<button class="post-action">' +
+                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>' +
+                            ' Share' +
+                        '</button>' +
+                    '</div>';
+                container.appendChild(card);
+            });
+        }
+
+        // ============ LIKE POST ============
+        function likePost(btn, user) {
+            var span = btn.querySelector('span');
+            var current = parseInt(span.textContent);
+            span.textContent = (current + 1) + ' likes';
+            btn.style.color = '#c8963e';
+            showToast('You liked ' + user + '\'s post', 'success');
+
+            /*
+            // 🔌 API call for liking a post
+            apiCall('/network/posts/like', 'POST', { post_id: postId }, function(status, data) {
+                if (status === 200) {
+                    span.textContent = data.likes + ' likes';
+                }
+            });
+            */
+        }
+
+        // ============ POST CHAT ============
+        function postChat() {
+            var input = document.getElementById('chatMessage');
+            var message = input.value.trim();
+            if (!message) return;
+
+            var container = document.getElementById('chatMessages');
+            container.innerHTML += '<div style="padding:8px 0;border-bottom:1px solid #e2e8f0;">💬 ' + message + ' <span style="font-size:11px;color:#a0aec0;">Just now</span></div>';
+            input.value = '';
+            showToast('Message posted!', 'success');
+
+            /*
+            // 🔌 API call for posting chat
+            apiCall('/network/chat', 'POST', { message: message }, function(status, data) {
+                if (status === 201) {
+                    loadChatMessages(); // Reload from backend
+                }
+            });
+            */
+        }
+
+        // ============================================
+        // 🔌 LOAD NEARBY SMEs — Python Backend
+        // ============================================
+        function loadNearby() {
+            /*
+            apiCall('/network/nearby', 'GET', null, function(status, data) {
+                if (status === 200 && data.nearby) {
+                    renderNearby(data.nearby);
+                }
+            });
+            */
+
+            // ⚠️ DEMO
+            renderNearby(demoNearby);
+        }
+
+        function renderNearby(list) {
+            var container = document.getElementById('nearbyList');
+            container.innerHTML = '';
+            list.forEach(function(item) {
+                container.innerHTML +=
+                    '<div class="nearby-item">' +
+                        '<div class="nearby-avatar ' + item.avClass + '">' + item.initials + '</div>' +
+                        '<div class="nearby-info">' +
+                            '<div class="nearby-name">' + item.name + '</div>' +
+                            '<div class="nearby-detail">' + item.detail + '</div>' +
+                        '</div>' +
+                        '<div class="nearby-distance">' + item.distance + '</div>' +
+                    '</div>';
+            });
+        }
+
+        // ============================================
+        // 🔌 LOAD FOLLOWING — Python Backend
+        // ============================================
+        function loadFollowing() {
+            /*
+            apiCall('/network/following', 'GET', null, function(status, data) {
+                if (status === 200 && data.following) {
+                    renderFollowing(data.following);
+                }
+            });
+            */
+
+            // ⚠️ DEMO
+            renderFollowing(demoFollowing);
+        }
+
+        function renderFollowing(list) {
+            var container = document.getElementById('followingList');
+            container.innerHTML = '';
+            list.forEach(function(item) {
+                container.innerHTML +=
+                    '<div class="following-item">' +
+                        '<span class="following-dot"></span>' +
+                        '<div>' +
+                            '<div class="following-name">' + item.name + '</div>' +
+                            '<div class="following-sector">' + item.sector + '</div>' +
+                        '</div>' +
+                    '</div>';
+            });
+        }
+
+        // ============ LOGOUT ============
+        function handleLogout() {
+            localStorage.removeItem('nexus_token');
+            localStorage.removeItem('nexus_user');
+            window.location.href = 'login.html';
+        }
+
+        // ============ INIT ============
+        loadUser();
+        loadPosts();
+        loadNearby();
+        loadFollowing();
+
+        document.querySelectorAll('.sidebar-nav a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768) { closeSidebar(); }
+            });
+        });
+    </script>
+</body>
+</html>
