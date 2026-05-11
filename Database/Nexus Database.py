@@ -1,6 +1,5 @@
-# schema.py
+# Nexus Database.py
 import sqlite3
-
 
 
 def create_database(db_path="Nexus.db"):
@@ -84,32 +83,6 @@ def create_database(db_path="Nexus.db"):
         )
     """)
 
-    # Create indexes for better query performance
-    cursor.execute("""
-        CREATE INDEX IF NOT EXISTS idx_messages_sender 
-        ON Messages(sender)
-    """)
-
-    cursor.execute("""
-        CREATE INDEX IF NOT EXISTS idx_messages_chat 
-        ON Messages(sent_to_chat, time_sent)
-    """)
-
-    cursor.execute("""
-        CREATE INDEX IF NOT EXISTS idx_messages_group 
-        ON Messages(sent_to_group, time_sent)
-    """)
-
-    cursor.execute("""
-        CREATE INDEX IF NOT EXISTS idx_chats_users 
-        ON Chats(user_1, user_2)
-    """)
-
-    cursor.execute("""
-        CREATE INDEX IF NOT EXISTS idx_group_members_group 
-        ON Group_Members(group_id)
-    """)
-
     # Create Posts table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS Posts (
@@ -154,6 +127,128 @@ def create_database(db_path="Nexus.db"):
             UNIQUE(user_id, target_id)
         )
     """)
+
+    # ============ TOOLKIT TABLES ============
+
+    # Inventory Products table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Inventory (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            category TEXT,
+            unit TEXT,
+            current_stock REAL DEFAULT 0,
+            reorder_level REAL DEFAULT 0,
+            cost_price REAL DEFAULT 0,
+            selling_price REAL DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES Users(ID)
+        )
+    """)
+
+    # Loans table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Loans (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            lender_name TEXT NOT NULL,
+            loan_type TEXT NOT NULL CHECK (loan_type IN ('business', 'personal', 'microfinance', 'p2p')),
+            principal REAL NOT NULL,
+            interest_rate REAL NOT NULL,
+            term_months INTEGER NOT NULL,
+            start_date TEXT NOT NULL,
+            status TEXT DEFAULT 'active' CHECK (status IN ('active', 'completed', 'defaulted')),
+            amount_paid REAL DEFAULT 0,
+            next_due_date TEXT,
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES Users(ID)
+        )
+    """)
+
+    # Loan Payments table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Loan_Payments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            loan_id INTEGER NOT NULL,
+            amount REAL NOT NULL,
+            payment_date TEXT NOT NULL,
+            reference TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (loan_id) REFERENCES Loans(id) ON DELETE CASCADE
+        )
+    """)
+
+    # Sales table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Sales (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            product_name TEXT NOT NULL,
+            quantity REAL NOT NULL,
+            unit_price REAL NOT NULL,
+            unit_cost REAL NOT NULL,
+            date TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES Users(ID)
+        )
+    """)
+
+    # Expenses table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Expenses (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            category TEXT NOT NULL CHECK (category IN ('Rent', 'Utilities', 'Salaries', 'Transport', 'Marketing', 'Inventory', 'Other')),
+            description TEXT,
+            amount REAL NOT NULL,
+            date TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES Users(ID)
+        )
+    """)
+
+    # Capital Contributions table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Capital (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            amount REAL NOT NULL,
+            date TEXT NOT NULL,
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES Users(ID)
+        )
+    """)
+
+    # Bookkeeping Entries table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Bookkeeping (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            type TEXT NOT NULL CHECK (type IN ('sale', 'purchase', 'expense')),
+            description TEXT,
+            amount REAL NOT NULL,
+            date TEXT NOT NULL,
+            category TEXT,
+            supplier TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES Users(ID)
+        )
+    """)
+
+    # Create indexes for toolkit tables
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_inventory_user ON Inventory(user_id)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_loans_user ON Loans(user_id)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_loan_payments_loan ON Loan_Payments(loan_id)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_sales_user ON Sales(user_id)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_sales_date ON Sales(date)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_expenses_user ON Expenses(user_id)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_expenses_date ON Expenses(date)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_capital_user ON Capital(user_id)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_bookkeeping_user ON Bookkeeping(user_id)")
 
     conn.commit()
     conn.close()
