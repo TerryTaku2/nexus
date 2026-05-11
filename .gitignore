@@ -1,1 +1,5 @@
-Nexus.db
+Database/Nexus.db
+Pillar 1- Networking/Nexus.db
+__pycache__/
+*.pyc
+
