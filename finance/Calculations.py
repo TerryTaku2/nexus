@@ -93,3 +93,8 @@ async def calculate_hire_purchase(request: InstallmentCalculationRequest):
             f"Monthly Payment: ${monthly_payment:,.2f}"
         )
     )
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8004)
