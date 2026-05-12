@@ -572,13 +572,14 @@
 </head>
 <body>
 
-    <!-- Sidebar Overlay -->
+    
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
-    <!-- Toast -->
+    
     <div class="toast" id="toast"></div>
 
-    <!-- ============ SIDEBAR ============ -->
+    
+    <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
             <div class="neXus-text">NeXus</div>
@@ -586,11 +587,11 @@
         </div>
 
         <nav class="sidebar-nav">
-            <a href="dashboard.html">
+            <a href="../dashboard/dashboard.html">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                 Dashboard
             </a>
-            <a href="network_hub.html">
+            <a href="../dashboard/dashboard.html">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
                 Network
             </a>
@@ -598,11 +599,11 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
                 Finance
             </a>
-            <a href="#">
+            <a href="../Search/search.html">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 Search
             </a>
-            <a href="#">
+            <a href="../Pillar 2- Government/government.html">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                 Gov
             </a>
@@ -624,7 +625,8 @@
         </div>
     </aside>
 
-    <!-- ============ HEADER ============ -->
+    
+    <!-- HEADER -->
     <header class="header">
         <div class="header-left">
             <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
@@ -641,20 +643,21 @@
         </div>
     </header>
 
-    <!-- ============ MAIN CONTENT ============ -->
+    
+    <!-- MAIN CONTENT -->
     <main class="main-content">
 
-        <!-- Top Navigation Pills -->
+        
         <div class="nav-pills">
-            <a href="network_hub.html" class="nav-pill default">Network</a>
+            <a href="../dashboard/dashboard.html" class="nav-pill default">Network</a>
             <a href="finance.html" class="nav-pill active">Finance</a>
-            <a href="#" class="nav-pill default">Search</a>
-            <a href="#" class="nav-pill default">Gov</a>
+            <a href="../Search/search.html" class="nav-pill default">Search</a>
+            <a href="../Pillar 2- Government/government.html" class="nav-pill default">Gov</a>
             <a href="#" class="nav-pill default">Corp</a>
             <a href="#" class="nav-pill default">Toolkit</a>
         </div>
 
-        <!-- Commercial Banks Section -->
+        
         <div class="section-card">
             <h3>
                 <span class="icon-circle blue">🏦</span>
@@ -664,7 +667,7 @@
             <div class="cards-grid" id="banksList"></div>
         </div>
 
-        <!-- Microfinance Institutions Section -->
+        
         <div class="section-card">
             <h3>
                 <span class="icon-circle green">📊</span>
@@ -674,7 +677,7 @@
             <div class="cards-grid" id="microfinanceList"></div>
         </div>
 
-        <!-- P2P Lending Section -->
+        
         <div class="section-card">
             <h3>
                 <span class="icon-circle purple">🤝</span>
@@ -697,7 +700,7 @@
             </div>
         </div>
 
-        <!-- Mobile Money & Payments Section -->
+        
         <div class="section-card">
             <h3>
                 <span class="icon-circle teal">📱</span>
@@ -707,7 +710,7 @@
             <div class="cards-grid" id="mobileMoneyList"></div>
         </div>
 
-        <!-- Promotions Section -->
+        
         <div class="section-card">
             <h3>
                 <span class="icon-circle gold">🎉</span>
@@ -717,7 +720,7 @@
             <div class="cards-grid" id="promotionsList"></div>
         </div>
 
-        <!-- Financial Literacy Section -->
+        
         <div class="section-card">
             <h3>
                 <span class="icon-circle red">📚</span>
@@ -735,7 +738,8 @@
         </div>
     </main>
 
-    <!-- Modal for Products -->
+    
+    <!-- MODALS -->
     <div id="productModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -746,7 +750,7 @@
         </div>
     </div>
 
-    <!-- Borrow Form Modal -->
+    
     <div id="borrowModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -776,7 +780,7 @@
         </div>
     </div>
 
-    <!-- Lend Modal -->
+    
     <div id="lendModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -787,7 +791,7 @@
         </div>
     </div>
 
-    <!-- Payment Modal -->
+    
     <div id="paymentModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">

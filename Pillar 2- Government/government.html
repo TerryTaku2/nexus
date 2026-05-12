@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeXus - Government Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="government.css">
+</head>
+<body>
+
+    
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    
+    <div class="toast" id="toast"></div>
+
+    
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="neXus-text">NeXus</div>
+            <div class="neXus-sub">SME Community Platform</div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="../dashboard/dashboard.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                Dashboard
+            </a>
+            <a href="../dashboard/dashboard.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+                Network
+            </a>
+            <a href="../finance/finance.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                Finance
+            </a>
+            <a href="../Search/search.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Search
+            </a>
+            <a href="government.html" class="active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                Gov
+            </a>
+            <a href="#">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+                Corp
+            </a>
+            <a href="#">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+                Toolkit
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="#" onclick="handleLogout()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Sign Out
+            </a>
+        </div>
+    </aside>
+
+    
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+            <span class="header-title">Government Hub</span>
+            <p style="margin: 4px 0 0 0; font-size: 0.95rem; color: #718096;">Easy government services for your business.</p>
+        </div>
+        <div class="header-right">
+            <button class="header-icon-btn" title="Notifications">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 01-3.46 0"/>
+                </svg>
+            </button>
+            <div class="user-avatar" id="userAvatar">N</div>
+        </div>
+    </header>
+
+    
+    <main class="main-content">
+
+        
+        <div class="nav-pills">
+            <a href="../dashboard/dashboard.html" class="nav-pill default">Network</a>
+            <a href="../finance/finance.html" class="nav-pill default">Finance</a>
+            <a href="../Search/search.html" class="nav-pill default">Search</a>
+            <a href="government.html" class="nav-pill active">Gov</a>
+            <a href="#" class="nav-pill default">Corp</a>
+            <a href="#" class="nav-pill default">Toolkit</a>
+        </div>
+
+        
+        <div class="section-card">
+            <h3>
+                <span class="icon-circle blue">🏢</span>
+                Company Registrar
+            </h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Register a business or check company details.</p>
+            <div class="cards-grid" id="registrarList"></div>
+        </div>
+
+        
+        <div class="section-card">
+            <h3>
+                <span class="icon-circle green">📊</span>
+                ZIMRA Tax Services
+            </h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">File tax returns and view your tax status.</p>
+            <div class="cards-grid" id="zimraList"></div>
+        </div>
+
+        
+        <div class="section-card">
+            <h3>
+                <span class="icon-circle purple">🚢</span>
+                Import & Customs
+            </h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Calculate import duty and track customs status.</p>
+            <div class="cards-grid" id="customsList"></div>
+        </div>
+
+        
+        <div class="section-card">
+            <h3>
+                <span class="icon-circle gold">🏛️</span>
+                Government Ministries
+            </h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Contact ministries for licenses and support.</p>
+            <div class="cards-grid" id="ministriesList"></div>
+        </div>
+
+        
+        <div class="section-card">
+            <h3>
+                <span class="icon-circle teal">⚙️</span>
+                E-Services Portal
+            </h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Apply for government services online.</p>
+            <div class="cards-grid" id="eservicesList"></div>
+        </div>
+
+        
+        <div class="section-card">
+            <h3>
+                <span class="icon-circle red">📢</span>
+                Public Notices
+            </h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Important government news for small businesses.</p>
+            <div class="cards-grid" id="noticesList"></div>
+        </div>
+
+        
+        <div class="section-card">
+            <h3>
+                <span class="icon-circle gold">🎁</span>
+                SME Support
+            </h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Support programs for small businesses.</p>
+            <div class="cards-grid" id="smeSupportList"></div>
+        </div>
+
+    </main>
+
+    
+    <div id="serviceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Service Details</h3>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Register Company</h3>
+                <span class="close-modal" onclick="closeRegisterModal()">&times;</span>
+            </div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>Company Name</label>
+                    <input type="text" id="regCompanyName" placeholder="Enter company name" required>
+                </div>
+                <div class="form-group">
+                    <label>Registration Number</label>
+                    <input type="text" id="regNumber" placeholder="e.g., REG-2026-001" required>
+                </div>
+                <div class="form-group">
+                    <label>Owner Name</label>
+                    <input type="text" id="regOwnerName" placeholder="Owner full name" required>
+                </div>
+                <div class="form-group">
+                    <label>Sector</label>
+                    <select id="regSector" required>
+                        <option value="">Select sector</option>
+                        <option value="Manufacturing">Manufacturing</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Retail">Retail</option>
+                        <option value="Services">Services</option>
+                        <option value="Agriculture">Agriculture</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-action">Register Company</button>
+            </form>
+        </div>
+    </div>
+
+    
+    <div id="taxModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>File Tax Return</h3>
+                <span class="close-modal" onclick="closeTaxModal()">&times;</span>
+            </div>
+            <form id="taxForm">
+                <div class="form-group">
+                    <label>Tax Period</label>
+                    <select id="taxPeriod" required>
+                        <option value="">Select tax period</option>
+                        <option value="Q1-2026">Q1 2026</option>
+                        <option value="Q2-2026">Q2 2026</option>
+                        <option value="Q3-2026">Q3 2026</option>
+                        <option value="Q4-2026">Q4 2026</option>
+                        <option value="Full Year 2025">Full Year 2025</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Income Amount ($)</label>
+                    <input type="number" id="incomeAmount" placeholder="e.g., 50000" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Tax Paid ($)</label>
+                    <input type="number" id="taxPaid" placeholder="e.g., 10000" min="0" required>
+                </div>
+                <button type="submit" class="btn-action">File Tax Return</button>
+            </form>
+        </div>
+    </div>
+
+    
+    <div id="dutyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Import Duty Calculator</h3>
+                <span class="close-modal" onclick="closeDutyModal()">&times;</span>
+            </div>
+            <form id="dutyForm">
+                <div class="form-group">
+                    <label>Product Type</label>
+                    <select id="productType" required>
+                        <option value="">Select product type</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Machinery">Machinery</option>
+                        <option value="Textiles">Textiles</option>
+                        <option value="Raw Materials">Raw Materials</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Product Value ($)</label>
+                    <input type="number" id="productValue" placeholder="e.g., 5000" min="0" required>
+                </div>
+                <button type="submit" class="btn-action">Calculate Duty</button>
+            </form>
+            <div id="dutyResult" style="margin-top: 20px; display: none;">
+                <div style="background: #f0fff4; border-left: 4px solid #48bb78; padding: 16px; border-radius: 8px;">
+                    <div style="font-weight: 700; color: #1e3a5f; margin-bottom: 8px;">Estimated Duty: <span id="dutyAmount">$0.00</span></div>
+                    <div style="font-size: 12px; color: #4a5568;">Duty Rate: 20% | Processing Time: 2-3 business days</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="eserviceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="eserviceTitle">E-Service Application</h3>
+                <span class="close-modal" onclick="closeEServiceModal()">&times;</span>
+            </div>
+            <form id="eserviceForm">
+                <div class="form-group">
+                    <label>Applicant Name</label>
+                    <input type="text" id="applicantName" placeholder="Your full name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="applicantEmail" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Additional Details</label>
+                    <textarea id="applicantDetails" placeholder="Any additional information..." rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn-action">Submit Application</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // User data
+        let userData = null;
+        let currentUserId = null;
+
+        try {
+            const userDataStr = localStorage.getItem('nexus_user');
+            if (userDataStr) {
+                userData = JSON.parse(userDataStr);
+                currentUserId = userData.id || userData.ID;
+                document.getElementById('userAvatar').textContent = (userData.business_name || userData.owner_name || 'N').charAt(0).toUpperCase();
+            }
+        } catch(e) {}
+
+        if (!currentUserId) {
+            console.log('Please login first');
+        }
+
+        // Government Services Data
+        const registrarServices = [
+            { name: "Company Verification", icon: "🔍", description: "Check if a company is registered" },
+            { name: "New Registration", icon: "📝", description: "Register a new business entity" },
+            { name: "Update Details", icon: "✏️", description: "Modify company information" }
+        ];
+
+        const zimraServices = [
+            { name: "Tax Status", icon: "📊", description: "Paid Up | Valid until Dec 2025" },
+            { name: "File Tax Return", icon: "📋", description: "Submit quarterly or annual tax returns" },
+            { name: "Tax Compliance Certificate", icon: "✅", description: "Request TCC for business purposes" }
+        ];
+
+        const customsServices = [
+            { name: "Duty Calculator", icon: "🧮", description: "Calculate import duty for goods" },
+            { name: "Customs Clearance", icon: "🚢", description: "Track customs clearance status" },
+            { name: "Import Permits", icon: "📄", description: "Apply for import permits" }
+        ];
+
+        const ministries = [
+            { name: "Ministry of Industry", icon: "🏭", description: "Industrial licensing & manufacturing" },
+            { name: "Ministry of Finance", icon: "💰", description: "Financial policy & business grants" },
+            { name: "Ministry of SMEs", icon: "👥", description: "SME support & development" },
+            { name: "Ministry of ICT", icon: "💻", description: "Technology & digital services" }
+        ];
+
+        const eServices = [
+            { name: "License Renewal", icon: "📜", description: "Renew business licenses online" },
+            { name: "Export Permits", icon: "🚢", description: "Apply for export documentation" },
+            { name: "Work Permits", icon: "👤", description: "Foreign worker permit applications" },
+            { name: "Environmental Clearance", icon: "🌱", description: "Environmental impact assessments" }
+        ];
+
+        const publicNotices = [
+            { name: "Business Registration Deadline", icon: "⏰", description: "New registration deadline extended" },
+            { name: "Tax Rate Updates", icon: "📈", description: "Changes to corporate tax rates" },
+            { name: "SME Grant Programme", icon: "🎁", description: "New funding available for SMEs" }
+        ];
+
+        const smeSupport = [
+            { name: "Export Development Fund", icon: "🌍", description: "Grants for international expansion" },
+            { name: "Digital Transformation Grant", icon: "💻", description: "Funding for technology adoption" },
+            { name: "Skills Development", icon: "📚", description: "Employee training subsidies" }
+        ];
+
+        // Sidebar functions
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        }
+
+        // Toast function
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+
+        // Load services
+        function loadRegistrarServices() {
+            const container = document.getElementById('registrarList');
+            container.innerHTML = registrarServices.map(service => `
+                <div class="gov-card">
+                    <div class="card-header">
+                        <div class="card-icon">${service.icon}</div>
+                        <div class="card-title">${service.name}</div>
+                    </div>
+                    <p class="card-desc">${service.description}</p>
+                    <button class="btn-action" onclick="openRegistrarModal('${service.name}')">Open</button>
+                </div>
+            `).join('');
+        }
+
+        function loadZIMRAServices() {
+            const container = document.getElementById('zimraList');
+            container.innerHTML = zimraServices.map(service => `
+                <div class="gov-card">
+                    <div class="card-header">
+                        <div class="card-icon">${service.icon}</div>
+                        <div class="card-title">${service.name}</div>
+                    </div>
+                    <p class="card-desc">${service.description}</p>
+                    <button class="btn-action" onclick="openZIMRAModal('${service.name}')">Open</button>
+                </div>
+            `).join('');
+        }
+
+        function loadCustomsServices() {
+            const container = document.getElementById('customsList');
+            container.innerHTML = customsServices.map(service => `
+                <div class="gov-card">
+                    <div class="card-header">
+                        <div class="card-icon">${service.icon}</div>
+                        <div class="card-title">${service.name}</div>
+                    </div>
+                    <p class="card-desc">${service.description}</p>
+                    <button class="btn-action" onclick="openCustomsModal('${service.name}')">Open</button>
+                </div>
+            `).join('');
+        }
+
+        function loadMinistries() {
+            const container = document.getElementById('ministriesList');
+            container.innerHTML = ministries.map(ministry => `
+                <div class="gov-card">
+                    <div class="card-header">
+                        <div class="card-icon">${ministry.icon}</div>
+                        <div class="card-title">${ministry.name}</div>
+                    </div>
+                    <p class="card-desc">${ministry.description}</p>
+                    <button class="btn-action" onclick="openMinistryModal('${ministry.name}')">Contact</button>
+                </div>
+            `).join('');
+        }
+
+        function loadEServices() {
+            const container = document.getElementById('eservicesList');
+            container.innerHTML = eServices.map(service => `
+                <div class="gov-card">
+                    <div class="card-header">
+                        <div class="card-icon">${service.icon}</div>
+                        <div class="card-title">${service.name}</div>
+                    </div>
+                    <p class="card-desc">${service.description}</p>
+                    <button class="btn-action" onclick="openEServiceModal('${service.name}')">Apply</button>
+                </div>
+            `).join('');
+        }
+
+        function loadPublicNotices() {
+            const container = document.getElementById('noticesList');
+            container.innerHTML = publicNotices.map(notice => `
+                <div class="gov-card">
+                    <div class="card-header">
+                        <div class="card-icon">${notice.icon}</div>
+                        <div class="card-title">${notice.name}</div>
+                    </div>
+                    <p class="card-desc">${notice.description}</p>
+                    <button class="btn-action" onclick="openNoticeModal('${notice.name}', '${notice.description}')">Read</button>
+                </div>
+            `).join('');
+        }
+
+        function loadSMESupport() {
+            const container = document.getElementById('smeSupportList');
+            container.innerHTML = smeSupport.map(program => `
+                <div class="gov-card" style="cursor: default; opacity: 0.9;">
+                    <div class="card-header">
+                        <div class="card-icon">${program.icon}</div>
+                        <div class="card-title">${program.name}</div>
+                    </div>
+                    <p class="card-desc">${program.description}</p>
+                    <p style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">NeXus surfaces government opportunities for SMEs</p>
+                </div>
+            `).join('');
+        }
+
+        // Modal functions
+        function openRegistrarModal(serviceName) {
+            if (serviceName === 'New Registration') {
+                document.getElementById('registerModal').style.display = 'flex';
+            } else {
+                const modalBody = document.getElementById('modalBody');
+                document.getElementById('modalTitle').innerHTML = `${serviceName}`;
+                modalBody.innerHTML = `
+                    <p>Details appear here.</p>
+                    <p>This is a demo page.</p>
+                `;
+                document.getElementById('serviceModal').style.display = 'flex';
+            }
+        }
+
+        function openZIMRAModal(serviceName) {
+            if (serviceName === 'File Tax Return') {
+                document.getElementById('taxModal').style.display = 'flex';
+            } else if (serviceName === 'Tax Status') {
+                const modalBody = document.getElementById('modalBody');
+                document.getElementById('modalTitle').innerHTML = `${serviceName}`;
+                modalBody.innerHTML = `
+                    <div style="background: #f0fff4; border-left: 4px solid #48bb78; padding: 16px; border-radius: 8px;">
+                        <div style="font-weight: 700; color: #1e3a5f; margin-bottom: 12px;">Status: <span style="color: #48bb78;">Paid Up</span></div>
+                        <div style="color: #4a5568; margin-bottom: 8px;">Valid until: <span style="font-weight: 700;">Dec 2025</span></div>
+                        <div style="font-size: 12px; color: #4a5568; margin-top: 12px;">Your company tax compliance is current. No action needed.</div>
+                    </div>
+                `;
+                document.getElementById('serviceModal').style.display = 'flex';
+            } else if (serviceName === 'Tax Compliance Certificate') {
+                const modalBody = document.getElementById('modalBody');
+                document.getElementById('modalTitle').innerHTML = `${serviceName}`;
+                modalBody.innerHTML = `
+                    <p style="margin-bottom: 16px;">Request a Tax Compliance Certificate for business purposes.</p>
+                    <button class="btn-action" onclick="requestTCC()" style="width: 100%; padding: 12px;">Request TCC</button>
+                    <div id="tccResult" style="margin-top: 16px; display: none;">
+                        <div style="background: #f0fff4; border-left: 4px solid #48bb78; padding: 16px; border-radius: 8px;">
+                            <div style="font-weight: 700; color: #1e3a5f; margin-bottom: 8px;">✓ Request Submitted</div>
+                            <div style="font-size: 12px; color: #4a5568;">Your request has been submitted. Processing takes 48 hours (demo).</div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('serviceModal').style.display = 'flex';
+            } else {
+                const modalBody = document.getElementById('modalBody');
+                document.getElementById('modalTitle').innerHTML = `${serviceName}`;
+                modalBody.innerHTML = `
+                    <p>Details appear here.</p>
+                    <p>This is a demo page.</p>
+                `;
+                document.getElementById('serviceModal').style.display = 'flex';
+            }
+        }
+
+        function openCustomsModal(serviceName) {
+            if (serviceName === 'Duty Calculator') {
+                document.getElementById('dutyModal').style.display = 'flex';
+            } else if (serviceName === 'Customs Clearance') {
+                const modalBody = document.getElementById('modalBody');
+                document.getElementById('modalTitle').innerHTML = `${serviceName}`;
+                modalBody.innerHTML = `
+                    <div class="form-group">
+                        <label>Clearance Reference Number</label>
+                        <input type="text" id="clearanceRef" placeholder="e.g., CUS-2026-001" required>
+                    </div>
+                    <button class="btn-action" onclick="checkClearanceStatus()" style="width: 100%; padding: 12px;">Check Status</button>
+                    <div id="clearanceResult" style="margin-top: 16px; display: none;">
+                        <div style="background: #fef9f0; border-left: 4px solid #c8963e; padding: 16px; border-radius: 8px;">
+                            <div style="font-weight: 700; color: #1e3a5f; margin-bottom: 8px;">Status: <span style="color: #c8963e;">In Progress</span></div>
+                            <div style="font-size: 12px; color: #4a5568;">Customs check complete (demo). Expected clearance: 2-3 business days.</div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('serviceModal').style.display = 'flex';
+            } else {
+                const modalBody = document.getElementById('modalBody');
+                document.getElementById('modalTitle').innerHTML = `${serviceName}`;
+                modalBody.innerHTML = `
+                    <p>Details appear here.</p>
+                    <p>This is a demo page.</p>
+                `;
+                document.getElementById('serviceModal').style.display = 'flex';
+            }
+        }
+
+        function openMinistryModal(ministryName) {
+            const modalBody = document.getElementById('modalBody');
+            document.getElementById('modalTitle').innerHTML = `${ministryName}`;
+            modalBody.innerHTML = `
+                <p><strong>Contact:</strong> info@${ministryName.toLowerCase().replace(' ', '')}.gov</p>
+                <p><strong>Services:</strong> Policy guidance, licensing, grants and support services.</p>
+                <p style="margin-top: 20px; color: var(--text-muted); font-size: 0.9rem;">
+                    Contact the ministry for help and next steps.
+                </p>
+            `;
+            document.getElementById('serviceModal').style.display = 'flex';
+        }
+
+        function openEServiceModal(serviceName) {
+            document.getElementById('eserviceTitle').textContent = serviceName;
+            currentEService = serviceName;
+            document.getElementById('eserviceModal').style.display = 'flex';
+        }
+
+        function openNoticeModal(title, description) {
+            const modalBody = document.getElementById('modalBody');
+            document.getElementById('modalTitle').innerHTML = `${title}`;
+            modalBody.innerHTML = `
+                <p>${description}</p>
+                <p style="margin-top: 20px; color: var(--text-muted); font-size: 0.9rem;">
+                    Visit the government website for more details.
+                </p>
+            `;
+            document.getElementById('serviceModal').style.display = 'flex';
+        }
+
+        function openSMEProgramModal(title, description) {
+            const modalBody = document.getElementById('modalBody');
+            document.getElementById('modalTitle').innerHTML = `${title}`;
+            modalBody.innerHTML = `
+                <p>${description}</p>
+                <p style="margin-top: 20px; color: var(--text-muted); font-size: 0.9rem;">
+                    Only registered SMEs can apply.
+                </p>
+            `;
+            document.getElementById('serviceModal').style.display = 'flex';
+        }
+
+        // Form submissions
+        document.getElementById('registerForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('regCompanyName').value;
+            const regNum = document.getElementById('regNumber').value;
+            const owner = document.getElementById('regOwnerName').value;
+            const sector = document.getElementById('regSector').value;
+
+            try {
+                const response = await fetch('http://localhost:8002/register-company', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        company_name: name,
+                        registration_number: regNum,
+                        owner_name: owner,
+                        sector: sector
+                    })
+                });
+                const data = await response.json();
+                showToast(`✓ ${data.message}`, 'success');
+                closeRegisterModal();
+                this.reset();
+            } catch (error) {
+                showToast('Error registering company. Make sure API is running.', 'error');
+            }
+        });
+
+        document.getElementById('taxForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const period = document.getElementById('taxPeriod').value;
+            const income = parseFloat(document.getElementById('incomeAmount').value);
+            const tax = parseFloat(document.getElementById('taxPaid').value);
+
+            try {
+                const response = await fetch('http://localhost:8002/file-tax-return', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tax_period: period,
+                        income_amount: income,
+                        tax_paid: tax
+                    })
+                });
+                const data = await response.json();
+                showToast(`✓ ${data.message}`, 'success');
+                closeTaxModal();
+                this.reset();
+            } catch (error) {
+                showToast('Error filing tax return. Make sure API is running.', 'error');
+            }
+        });
+
+        document.getElementById('dutyForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const productType = document.getElementById('productType').value;
+            const productValue = parseFloat(document.getElementById('productValue').value);
+
+            try {
+                const response = await fetch('http://localhost:8002/calculate-duty', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        product_type: productType,
+                        product_value: productValue
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('dutyAmount').textContent = `$${data.estimated_duty.toFixed(2)}`;
+                document.getElementById('dutyResult').style.display = 'block';
+            } catch (error) {
+                showToast('Error calculating duty. Make sure API is running.', 'error');
+            }
+        });
+
+        document.getElementById('eserviceForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('applicantName').value;
+            const email = document.getElementById('applicantEmail').value;
+            const details = document.getElementById('applicantDetails').value;
+
+            try {
+                const response = await fetch('http://localhost:8002/e-services/apply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        service_type: currentEService,
+                        applicant_name: name,
+                        email: email,
+                        details: details
+                    })
+                });
+                const data = await response.json();
+                showToast(`✓ ${data.message}`, 'success');
+                closeEServiceModal();
+                this.reset();
+            } catch (error) {
+                showToast('Error submitting application. Make sure API is running.', 'error');
+            }
+        });
+
+        function requestTCC() {
+            document.getElementById('tccResult').style.display = 'block';
+            showToast('✓ TCC request submitted. Processing takes 48 hours (demo)', 'success');
+        }
+
+        function checkClearanceStatus() {
+            const ref = document.getElementById('clearanceRef').value;
+            if (ref.trim()) {
+                document.getElementById('clearanceResult').style.display = 'block';
+                showToast('✓ Clearance status retrieved', 'success');
+            } else {
+                showToast('Please enter a reference number', 'error');
+            }
+        }
+
+        // Modal close functions
+        function closeModal() { document.getElementById('serviceModal').style.display = 'none'; }
+        function closeRegisterModal() { document.getElementById('registerModal').style.display = 'none'; }
+        function closeTaxModal() { document.getElementById('taxModal').style.display = 'none'; }
+        function closeDutyModal() { document.getElementById('dutyModal').style.display = 'none'; }
+        function closeEServiceModal() { document.getElementById('eserviceModal').style.display = 'none'; }
+
+        function handleLogout() {
+            localStorage.clear();
+            window.location.href = '/';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Initialize
+        loadRegistrarServices();
+        loadZIMRAServices();
+        loadCustomsServices();
+        loadMinistries();
+        loadEServices();
+        loadPublicNotices();
+        loadSMESupport();
+    </script>
+</body>
+</html>
+

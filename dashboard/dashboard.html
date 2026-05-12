@@ -647,13 +647,13 @@
 </head>
 <body>
 
-    <!-- Sidebar Overlay -->
+    
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
-    <!-- Toast -->
+    
     <div class="toast" id="toast"></div>
 
-    <!-- ============ SIDEBAR ============ -->
+    
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
             <div class="neXus-text">NeXus</div>
@@ -665,19 +665,19 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                 Dashboard
             </a>
-            <a href="#" class="active">
+            <a href="dashboard.html" class="active">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
                 Network
             </a>
-            <a href="community.html">
+            <a href="../finance/finance.html">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
                 Finance
             </a>
-            <a href="#">
+            <a href="../Search/search.html">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 Search
             </a>
-            <a href="#">
+            <a href="../Pillar 2- Government/government.html">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                 Gov
             </a>
@@ -699,7 +699,7 @@
         </div>
     </aside>
 
-    <!-- ============ HEADER ============ -->
+    
     <header class="header">
         <div class="header-left">
             <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
@@ -717,26 +717,26 @@
         </div>
     </header>
 
-    <!-- ============ MAIN CONTENT ============ -->
+    
     <main class="main-content">
 
-        <!-- Top Navigation Pills -->
+        
         <div class="nav-pills">
-            <a href="#" class="nav-pill active">Network</a>
-            <a href="#" class="nav-pill default">Finance</a>
-            <a href="#" class="nav-pill default">Search</a>
-            <a href="#" class="nav-pill default">Gov</a>
+            <a href="dashboard.html" class="nav-pill active">Network</a>
+            <a href="../finance/finance.html" class="nav-pill default">Finance</a>
+            <a href="../Search/search.html" class="nav-pill default">Search</a>
+            <a href="../Pillar 2- Government/government.html" class="nav-pill default">Gov</a>
             <a href="#" class="nav-pill default">Corp</a>
             <a href="#" class="nav-pill default">Toolkit</a>
         </div>
 
-        <!-- Page Grid: Feed + Right Sidebar -->
+        
         <div class="page-grid">
 
-            <!-- ============ LEFT: FEED COLUMN ============ -->
+            
             <div class="feed-column">
 
-                <!-- Chat Board -->
+                
                 <div class="section-card">
                     <h3>
                         <span class="icon-circle blue">💬</span>
@@ -750,7 +750,7 @@
                     <div id="chatMessages" style="margin-top:12px;font-size:13px;color:var(--text-muted);"></div>
                 </div>
 
-                <!-- Posts & Updates -->
+                
                 <div class="section-card">
                     <h3>
                         <span class="icon-circle green">📢</span>
@@ -759,15 +759,15 @@
                     <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">See what others are sharing</p>
                     
                     <div id="postsContainer">
-                        <!-- Posts will be loaded here dynamically -->
+                        
                     </div>
                 </div>
             </div>
 
-            <!-- ============ RIGHT: SIDEBAR ============ -->
+            
             <div class="right-column">
 
-                <!-- Nearby SMEs -->
+                
                 <div class="section-card">
                     <h3>
                         <span class="icon-circle gold">📍</span>
@@ -775,11 +775,11 @@
                     </h3>
                     <p style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">Businesses close to your location</p>
                     <div class="nearby-list" id="nearbyList">
-                        <!-- Loaded dynamically -->
+                        
                     </div>
                 </div>
 
-                <!-- Following -->
+                
                 <div class="section-card">
                     <h3>
                         <span class="icon-circle purple">👥</span>
@@ -787,7 +787,7 @@
                     </h3>
                     <p style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">SMEs you follow</p>
                     <div class="following-list" id="followingList">
-                        <!-- Loaded dynamically -->
+                        
                     </div>
                 </div>
             </div>
