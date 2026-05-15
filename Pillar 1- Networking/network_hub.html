@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeXus - Network Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ============ RESET ============ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ============ VARIABLES ============ */
+        :root {
+            --neXus-navy: #1e3a5f;
+            --neXus-navy-dark: #152d4a;
+            --neXus-navy-light: #2c5282;
+            --neXus-gold: #c8963e;
+            --neXus-gold-light: #d4a853;
+            --neXus-gold-pale: #fef9f0;
+            --neXus-gradient: linear-gradient(135deg, #1e3a5f, #2c5282);
+            --bg: #f0f4f8;
+            --card-bg: #ffffff;
+            --text: #1a202c;
+            --text-light: #4a5568;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow: 0 4px 16px rgba(30, 58, 95, 0.08);
+            --shadow-lg: 0 8px 30px rgba(30, 58, 95, 0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --sidebar-width: 260px;
+            --header-height: 64px;
+        }
+
+        body {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ============ SIDEBAR ============ */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--neXus-navy);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-logo .neXus-text {
+            font-family: 'Fredoka One', cursive;
+            font-size: 28px;
+            background: linear-gradient(135deg, #ffffff, #c8963e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .sidebar-logo .neXus-sub {
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 600;
+            transition: all 0.2s;
+            letter-spacing: 0.01em;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        .sidebar-nav a.active {
+            background: rgba(200, 150, 62, 0.2);
+            color: var(--neXus-gold-light);
+            border-left: 3px solid var(--neXus-gold);
+        }
+
+        .sidebar-nav a svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            opacity: 0.8;
+        }
+
+        .sidebar-footer {
+            padding: 16px 12px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .sidebar-footer a:hover {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fc8181;
+        }
+
+        /* ============ HEADER ============ */
+        .header {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: var(--header-height);
+            background: white;
+            border-bottom: 1px solid var(--border);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            transition: left 0.3s ease;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-toggle {
+            display: none;
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 20px;
+        }
+
+        .menu-toggle:hover {
+            background: #f7fafc;
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-icon-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 10px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .header-icon-btn:hover {
+            background: #f7fafc;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--neXus-gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* ============ MAIN CONTENT ============ */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 24px;
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        /* ============ TOP NAV PILLS ============ */
+        .nav-pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .nav-pill {
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .nav-pill.default {
+            background: white;
+            color: var(--text-light);
+            border: 1px solid var(--border);
+        }
+
+        .nav-pill.default:hover {
+            background: #f7fafc;
+        }
+
+        .nav-pill.active {
+            background: var(--neXus-navy);
+            color: white;
+        }
+
+        /* ============ SECTION CARDS ============ */
+        .section-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .section-card h3 {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-card h3 .icon-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .icon-circle.blue { background: #ebf4ff; color: #3b82f6; }
+        .icon-circle.green { background: #f0fff4; color: #48bb78; }
+        .icon-circle.gold { background: #fffaf0; color: #c8963e; }
+        .icon-circle.purple { background: #faf5ff; color: #8b5cf6; }
+        .icon-circle.red { background: #fee2e2; color: #ef4444; }
+        .icon-circle.teal { background: #e6fffa; color: #14b8a6; }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .group-card {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.3s;
+            border: 1px solid var(--border);
+        }
+
+        .group-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .group-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .group-card .card-icon {
+            font-size: 28px;
+        }
+
+        .group-card .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--neXus-navy);
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 8px;
+            background: var(--neXus-gradient);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            font-family: 'Nunito', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .btn-action:hover {
+            opacity: 0.9;
+            transform: scale(0.98);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--neXus-navy);
+            color: var(--neXus-navy);
+        }
+
+        /* Post Card */
+        .post-card {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .post-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: white;
+        }
+
+        .post-user {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .post-time {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .post-content {
+            font-size: 13px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .post-action {
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .post-action:hover {
+            color: var(--neXus-gold);
+        }
+
+        /* Nearby & Following Lists */
+        .nearby-list, .following-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .nearby-item, .following-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nearby-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .nearby-info {
+            flex: 1;
+        }
+
+        .nearby-name {
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .nearby-detail {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .nearby-distance {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--neXus-gold);
+        }
+
+        .follow-btn {
+            padding: 4px 12px;
+            background: var(--neXus-navy);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .follow-btn.following {
+            background: #10b981;
+        }
+
+        /* Create Post Area */
+        .create-post-area {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .post-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-family: 'Nunito', sans-serif;
+            resize: vertical;
+            font-size: 13px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .close-modal {
+            cursor: pointer;
+            font-size: 24px;
+            color: var(--text-muted);
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* Chat Board */
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .chat-message {
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-message.sent {
+            align-items: flex-end;
+        }
+
+        .chat-message.received {
+            align-items: flex-start;
+        }
+
+        .chat-bubble {
+            max-width: 70%;
+            padding: 8px 12px;
+            border-radius: 18px;
+            font-size: 13px;
+        }
+
+        .sent .chat-bubble {
+            background: var(--neXus-gradient);
+            color: white;
+        }
+
+        .received .chat-bubble {
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .chat-sender {
+            font-size: 10px;
+            margin-bottom: 3px;
+            font-weight: 600;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            background: var(--neXus-navy);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 1000;
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            border-left: 4px solid var(--neXus-gold);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.success { border-left-color: #48bb78; }
+        .toast.error { border-left-color: #fc8181; }
+
+        /* Overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 90;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .sidebar-overlay.active {
+                display: block;
+            }
+            .header {
+                left: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            .menu-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="neXus-text">NeXus</div>
+            <div class="neXus-sub">SME Community Platform</div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="/dashboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                Dashboard
+            </a>
+            <a href="#" class="active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+                Network
+            </a>
+            <a href="/finance">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                Finance
+            </a>
+            <a href="#">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Search
+            </a>
+            <a href="#">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                Gov
+            </a>
+            <a href="#">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+                Corp
+            </a>
+            <a href="#">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+                Toolkit
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="#" onclick="handleLogout()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Sign Out
+            </a>
+        </div>
+    </aside>
+
+    <!-- ============ HEADER ============ -->
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+            <span class="header-title">Network Hub</span>
+        </div>
+        <div class="header-right">
+            <button class="header-icon-btn" title="Notifications">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 01-3.46 0"/>
+                </svg>
+            </button>
+            <div class="user-avatar" id="userAvatar">N</div>
+        </div>
+    </header>
+
+    <!-- ============ MAIN CONTENT ============ -->
+    <main class="main-content">
+
+        <!-- Top Navigation Pills -->
+        <div class="nav-pills">
+            <a href="#" class="nav-pill active">Network</a>
+            <a href="/finance" class="nav-pill default">Finance</a>
+            <a href="#" class="nav-pill default">Search</a>
+            <a href="#" class="nav-pill default">Gov</a>
+            <a href="#" class="nav-pill default">Corp</a>
+            <a href="#" class="nav-pill default">Toolkit</a>
+        </div>
+
+        <!-- Community Groups Section -->
+        <div class="section-card">
+            <h3>
+                <span class="icon-circle blue">👥</span>
+                Community Groups
+            </h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Join groups aligned with your business</p>
+            <button class="btn-action" style="width: auto; margin-bottom: 16px;" onclick="showCreateGroupModal()">+ Create New Group</button>
+            <div class="cards-grid" id="groupsList">
+                Loading groups...
+            </div>
+        </div>
+
+        <!-- Chat Board Section -->
+        <div class="section-card">
+            <h3>
+                <span class="icon-circle green">💬</span>
+                Chat Board
+            </h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Connect and chat with other SMEs</p>
+            <div class="cards-grid" id="myGroupsList">
+                Loading your groups...
+            </div>
+            <div id="chatContainer" class="hidden" style="margin-top: 16px;">
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendGroupMessage()">
+                    <button class="btn-action" style="width: auto; padding: 10px 20px;" onclick="sendGroupMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nearby SMEs Section -->
+        <div class="section-card">
+            <h3>
+                <span class="icon-circle gold">📍</span>
+                Nearby SMEs
+            </h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Businesses close to your location</p>
+            <div class="nearby-list" id="nearbyList">
+                Loading...
+            </div>
+        </div>
+
+        <!-- Posts & Updates Section -->
+        <div class="section-card">
+            <h3>
+                <span class="icon-circle purple">📝</span>
+                Posts & Updates
+            </h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">See what others are sharing</p>
+            <div class="create-post-area">
+                <textarea id="postContent" class="post-input" rows="2" placeholder="Share an update with the community..."></textarea>
+                <button class="btn-action" style="width: auto; align-self: flex-end;" onclick="createPost()">Post Update</button>
+            </div>
+            <div id="postsList">
+                Loading posts...
+            </div>
+        </div>
+
+        <!-- Following Section -->
+        <div class="section-card">
+            <h3>
+                <span class="icon-circle red">⭐</span>
+                Following
+            </h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">SMEs you follow</p>
+            <div class="following-list" id="followingList">
+                Loading...
+            </div>
+        </div>
+    </main>
+
+    <!-- Create Group Modal -->
+    <div id="createGroupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Group</h3>
+                <span class="close-modal" onclick="closeGroupModal()">&times;</span>
+            </div>
+            <div class="form-group">
+                <label>Group Name</label>
+                <input type="text" id="groupName" placeholder="e.g., Tech Entrepreneurs, Retail Network">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="groupDesc" rows="3" placeholder="Describe your group..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <input type="text" id="groupCategory" placeholder="e.g., Technology, Finance, Retail">
+            </div>
+            <div class="form-group">
+                <label>Location</label>
+                <input type="text" id="groupLocation" placeholder="e.g., Harare, Online">
+            </div>
+            <button class="btn-action" onclick="createGroup()">Create Group</button>
+        </div>
+    </div>
+
+    <script>
+        // User data
+        let userData = null;
+        let currentUserId = null;
+        let currentCity = null;
+        let ws = null;
+        let currentGroupId = null;
+
+        try {
+            const userDataStr = localStorage.getItem('nexus_user');
+            if (userDataStr) {
+                userData = JSON.parse(userDataStr);
+                currentUserId = userData.id || userData.ID;
+                currentCity = userData.city || 'Harare';
+                document.getElementById('userAvatar').textContent = (userData.business_name || userData.owner_name || 'U').charAt(0).toUpperCase();
+            }
+        } catch(e) {}
+
+        if (!currentUserId) {
+            alert('Please login first');
+            window.location.href = '/';
+        }
+
+        // WebSocket connection
+        function connectWebSocket() {
+            ws = new WebSocket(`ws://localhost:8000/ws/${currentUserId}`);
+            ws.onopen = () => console.log('WebSocket connected');
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'group_message' && currentGroupId === data.group_id) {
+                    displayChatMessage(data);
+                }
+            };
+            ws.onclose = () => setTimeout(connectWebSocket, 3000);
+        }
+        connectWebSocket();
+
+        // Sidebar functions
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        }
+
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+
+        // ============ GROUPS FUNCTIONS ============
+        async function loadGroups() {
+            try {
+                const response = await fetch('/api/groups');
+                const data = await response.json();
+                const groupsList = document.getElementById('groupsList');
+                
+                if (data.groups && data.groups.length > 0) {
+                    groupsList.innerHTML = data.groups.map(group => `
+                        <div class="group-card">
+                            <div class="card-header">
+                                <div class="card-icon">👥</div>
+                                <div class="card-title">${escapeHtml(group.name)}</div>
+                            </div>
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">${escapeHtml(group.description || 'No description')}</p>
+                            <p style="font-size:11px;color:var(--text-muted);margin-bottom:12px;">📍 ${escapeHtml(group.location || 'Online')} | 👥 ${group.member_count || 1} members</p>
+                            <button class="btn-action" onclick="joinGroup(${group.ID})">Join Group</button>
+                        </div>
+                    `).join('');
+                } else {
+                    groupsList.innerHTML = '<p style="text-align:center;padding:20px;">No groups yet. Create the first group!</p>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function joinGroup(groupId) {
+            try {
+                const response = await fetch('/api/groups/join', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: currentUserId, group_id: groupId })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('Successfully joined the group!', 'success');
+                    loadGroups();
+                    loadMyGroups();
+                } else {
+                    showToast(result.error || 'Already a member', 'error');
+                }
+            } catch (error) {
+                showToast('Error joining group', 'error');
+            }
+        }
+
+        async function loadMyGroups() {
+            try {
+                const response = await fetch('/api/groups');
+                const data = await response.json();
+                const myGroupsList = document.getElementById('myGroupsList');
+                
+                myGroupsList.innerHTML = data.groups.map(group => `
+                    <div class="group-card" onclick="openGroupChat(${group.ID}, '${escapeHtml(group.name)}')">
+                        <div class="card-header">
+                            <div class="card-icon">💬</div>
+                            <div class="card-title">${escapeHtml(group.name)}</div>
+                        </div>
+                        <p style="font-size:12px;color:var(--text-muted);">Click to start chatting</p>
+                        <p style="font-size:11px;color:var(--text-muted);margin-top:8px;">👥 ${group.member_count || 1} members</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function openGroupChat(groupId, groupName) {
+            currentGroupId = groupId;
+            document.getElementById('chatContainer').classList.remove('hidden');
+            document.getElementById('chatMessages').innerHTML = '';
+            document.querySelector('#chatBoardSection h3').innerHTML = `<span class="icon-circle green">💬</span> Chatting in: ${groupName}`;
+            
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'join_group', group_id: groupId }));
+            }
+        }
+
+        // ============ CHAT FUNCTIONS ============
+        function sendGroupMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message || !currentGroupId) return;
+
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    type: 'group_message',
+                    group_id: currentGroupId,
+                    message: message
+                }));
+                
+                displayChatMessage({
+                    message: message,
+                    user_name: userData?.business_name || userData?.owner_name,
+                    user_id: currentUserId,
+                    time: new Date().toISOString()
+                });
+                input.value = '';
+            }
+        }
+
+        function displayChatMessage(data) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const isSent = data.user_id === currentUserId;
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${isSent ? 'sent' : 'received'}`;
+            messageDiv.innerHTML = `
+                <div class="chat-bubble">
+                    ${!isSent ? `<div class="chat-sender">${escapeHtml(data.user_name)}</div>` : ''}
+                    ${escapeHtml(data.message)}
+                    <div style="font-size:10px;opacity:0.7;margin-top:4px;">${new Date(data.time).toLocaleTimeString()}</div>
+                </div>
+            `;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // ============ POSTS FUNCTIONS ============
+        async function loadPosts() {
+            try {
+                const response = await fetch('/api/posts');
+                const data = await response.json();
+                const postsList = document.getElementById('postsList');
+                
+                if (data.posts && data.posts.length > 0) {
+                    postsList.innerHTML = data.posts.map(post => `
+                        <div class="post-card">
+                            <div class="post-header">
+                                <div class="post-avatar" style="background: linear-gradient(135deg, #c8963e, #e2b062);">${(post.author_name || 'U')[0]}</div>
+                                <div>
+                                    <div class="post-user">${escapeHtml(post.author_name)}</div>
+                                    <div class="post-time">${new Date(post.created_at).toLocaleString()}</div>
+                                </div>
+                            </div>
+                            <div class="post-content">${escapeHtml(post.content)}</div>
+                            <div class="post-actions">
+                                <span class="post-action">❤️ ${post.likes || 0} Likes</span>
+                                <span class="post-action">💬 ${post.comments || 0} Comments</span>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    postsList.innerHTML = '<p style="text-align:center;padding:20px;">No posts yet. Share your first update!</p>';
+                }
+            } catch (error) {
+                console.error('Error loading posts:', error);
+            }
+        }
+
+        async function createPost() {
+            const content = document.getElementById('postContent').value;
+            if (!content.trim()) {
+                showToast('Please enter some content', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/posts/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content, user_id: currentUserId })
+                });
+                if (response.ok) {
+                    showToast('Post shared successfully!', 'success');
+                    document.getElementById('postContent').value = '';
+                    loadPosts();
+                } else {
+                    showToast('Error creating post', 'error');
+                }
+            } catch (error) {
+                showToast('Error creating post', 'error');
+            }
+        }
+
+        // ============ NEARBY SMEs FUNCTIONS ============
+        async function loadNearbySmes() {
+            try {
+                const response = await fetch(`/api/nearby-smes?city=${currentCity}&user_id=${currentUserId}`);
+                const data = await response.json();
+                const nearbyList = document.getElementById('nearbyList');
+                
+                if (data.smes && data.smes.length > 0) {
+                    nearbyList.innerHTML = data.smes.map(sme => `
+                        <div class="nearby-item">
+                            <div class="nearby-avatar" style="background: linear-gradient(135deg, #48bb78, #38a169);">${(sme.business_name || 'S')[0]}</div>
+                            <div class="nearby-info">
+                                <div class="nearby-name">${escapeHtml(sme.business_name)}</div>
+                                <div class="nearby-detail">${escapeHtml(sme.owner_name)} • ${escapeHtml(sme.sector)}</div>
+                            </div>
+                            <div class="nearby-distance">${currentCity}</div>
+                            <button class="follow-btn" onclick="followSme(${sme.ID})">Follow</button>
+                        </div>
+                    `).join('');
+                } else {
+                    nearbyList.innerHTML = '<p style="text-align:center;padding:20px;">No other SMEs found in your area.</p>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // ============ FOLLOWING FUNCTIONS ============
+        async function loadFollowing() {
+            try {
+                const response = await fetch(`/api/following/${currentUserId}`);
+                const data = await response.json();
+                const followingList = document.getElementById('followingList');
+                
+                if (data.following && data.following.length > 0) {
+                    followingList.innerHTML = data.following.map(sme => `
+                        <div class="following-item">
+                            <div class="nearby-avatar" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); width: 35px; height: 35px;">${(sme.business_name || 'S')[0]}</div>
+                            <div class="nearby-info">
+                                <div class="nearby-name">${escapeHtml(sme.business_name)}</div>
+                                <div class="nearby-detail">${escapeHtml(sme.owner_name)} • ${escapeHtml(sme.sector)}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    followingList.innerHTML = '<p style="text-align:center;padding:20px;">You are not following anyone yet.</p>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function followSme(followingId) {
+            try {
+                const response = await fetch('/api/follow', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ follower_id: currentUserId, following_id: followingId })
+                });
+                if (response.ok) {
+                    showToast('Now following!', 'success');
+                    loadNearbySmes();
+                    loadFollowing();
+                } else {
+                    showToast('Already following', 'error');
+                }
+            } catch (error) {
+                showToast('Error following', 'error');
+            }
+        }
+
+        // ============ GROUP CREATION ============
+        function showCreateGroupModal() {
+            document.getElementById('createGroupModal').style.display = 'flex';
+        }
+
+        function closeGroupModal() {
+            document.getElementById('createGroupModal').style.display = 'none';
+            document.getElementById('groupName').value = '';
+            document.getElementById('groupDesc').value = '';
+            document.getElementById('groupCategory').value = '';
+            document.getElementById('groupLocation').value = '';
+        }
+
+        async function createGroup() {
+            const name = document.getElementById('groupName').value;
+            const description = document.getElementById('groupDesc').value;
+            const category = document.getElementById('groupCategory').value;
+            const location = document.getElementById('groupLocation').value;
+            
+            if (!name) {
+                showToast('Please enter a group name', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/groups/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, description, category, location, created_by: currentUserId })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('Group created successfully!', 'success');
+                    closeGroupModal();
+                    loadGroups();
+                } else {
+                    showToast('Error creating group', 'error');
+                }
+            } catch (error) {
+                showToast('Error creating group', 'error');
+            }
+        }
+
+        // ============ HELPER FUNCTIONS ============
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function handleLogout() {
+            localStorage.clear();
+            window.location.href = '/';
+        }s
+
+        // Initialize everything
+        loadGroups();
+        loadMyGroups();
+        loadPosts();
+        loadNearbySmes();
+        loadFollowing();
+
+        // Make functions global for onclick
+        window.joinGroup = joinGroup;
+        window.openGroupChat = openGroupChat;
+        window.sendGroupMessage = sendGroupMessage;
+        window.followSme = followSme;
+        window.createPost = createPost;
+        window.showCreateGroupModal = showCreateGroupModal;
+        window.createGroup = createGroup;
+        window.closeGroupModal = closeGroupModal;
+    </script>
+</body>
+</html>
