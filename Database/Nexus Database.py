@@ -239,6 +239,20 @@ def create_database(db_path="Nexus.db"):
         )
     """)
 
+    # Notification Settings table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Notification_Settings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL UNIQUE,
+            notification_email TEXT,
+            inventory_alerts INTEGER DEFAULT 1,
+            loan_alerts INTEGER DEFAULT 1,
+            loan_days_before INTEGER DEFAULT 3,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES Users(ID)
+        )
+    """)
+
     # Create indexes for toolkit tables
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_inventory_user ON Inventory(user_id)")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_loans_user ON Loans(user_id)")
