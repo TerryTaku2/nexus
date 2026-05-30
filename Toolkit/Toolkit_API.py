@@ -581,14 +581,19 @@ async def record_sale(sale: SaleCreate, user_id: int = Query(...)):
         )
         conn.commit()
 
-        # Auto-deduct inventory stock
+        # Auto-deduct inventory stock — match by name first, then barcode
         inventory_deducted = False
         new_stock = None
         low_stock_alert = False
         inv = conn.execute(
-            "SELECT id, current_stock, reorder_level FROM Inventory WHERE user_id=? AND LOWER(name)=LOWER(?)",
+            "SELECT id, current_stock, reorder_level, name FROM Inventory WHERE user_id=? AND LOWER(name)=LOWER(?)",
             (user_id, sale.product_name)
         ).fetchone()
+        if not inv:
+            inv = conn.execute(
+                "SELECT id, current_stock, reorder_level, name FROM Inventory WHERE user_id=? AND barcode=?",
+                (user_id, sale.product_name)
+            ).fetchone()
         if inv:
             new_stock = round(inv["current_stock"] - sale.quantity, 4)
             conn.execute(

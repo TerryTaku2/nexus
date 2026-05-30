@@ -1105,7 +1105,7 @@
         } catch(e) { showToast('Error: ' + e.message, 'error'); }
     }
 
-    // Barcode lookup — uses API endpoint (barcode first, name fallback)
+    // Barcode lookup — barcode match first, then partial name match
     async function lookupBarcode() {
         const query = document.getElementById('barcodeInput').value.trim();
         if (!query) return;
@@ -1114,14 +1114,76 @@
             const res = await apiFetch(`/api/inventory/lookup?user_id=${userId}&q=${encodeURIComponent(query)}`);
             if (res.found) {
                 const p = res.product;
-                resultEl.style.cssText = 'display:block;background:#f0fff4;border:1px solid #c6f6d5;border-radius:10px;padding:12px;margin-bottom:12px';
-                resultEl.innerHTML = `<strong>Found:</strong> ${p.name} — Stock: ${p.current_stock} ${p.unit||''} — Sell Price: ${fmt(p.selling_price)}<br>
-                    <button class="btn btn-primary btn-sm" style="margin-top:8px" onclick="prefillSale('${p.name}',${p.selling_price},${p.cost_price})">Use in Sale Entry</button>`;
+                const lowStock = p.current_stock <= p.reorder_level;
+                const stockColor = lowStock ? '#e53e3e' : '#276749';
+                const stockLabel = lowStock ? '⚠ Low stock' : 'In stock';
+                resultEl.style.cssText = 'display:block;background:#f0fff4;border:1px solid #c6f6d5;border-radius:12px;padding:14px;margin-bottom:12px';
+                resultEl.innerHTML = `
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+                        <div>
+                            <div style="font-size:15px;font-weight:800;color:var(--navy);margin-bottom:4px">${p.name}</div>
+                            <div style="font-size:12px;color:var(--text-muted)">
+                                Category: ${p.category||'—'} &nbsp;|&nbsp; Unit: ${p.unit||'—'}
+                            </div>
+                            <div style="margin-top:8px;display:flex;gap:16px;font-size:13px">
+                                <span>Sell Price: <strong>${fmt(p.selling_price)}</strong></span>
+                                <span>Cost: <strong>${fmt(p.cost_price)}</strong></span>
+                                <span style="color:${stockColor};font-weight:700">${stockLabel}: <strong>${p.current_stock} ${p.unit||''}</strong></span>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                            <input type="number" id="quickQty" placeholder="Qty" min="0.01" step="0.01"
+                                style="width:75px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700">
+                            <button class="btn btn-primary" onclick="quickSell('${p.name.replace(/'/g,"\\'")}',${p.selling_price},${p.cost_price},${p.current_stock},'${(p.unit||'').replace(/'/g,"\\'")}')">
+                                ⚡ Quick Sell
+                            </button>
+                            <button class="btn btn-secondary" onclick="prefillSale('${p.name.replace(/'/g,"\\'")}',${p.selling_price},${p.cost_price})">
+                                Fill Form
+                            </button>
+                        </div>
+                    </div>`;
+                document.getElementById('quickQty').focus();
             } else {
-                resultEl.style.cssText = 'display:block;background:#fff5f5;border:1px solid #fc8181;border-radius:10px;padding:12px;margin-bottom:12px';
-                resultEl.innerHTML = `Product not found in inventory. <a href="#" onclick="switchTab('inventory')">Add it to inventory first.</a>`;
+                resultEl.style.cssText = 'display:block;background:#fff5f5;border:1px solid #fc8181;border-radius:12px;padding:14px;margin-bottom:12px';
+                resultEl.innerHTML = `<strong>Product not found in inventory.</strong><br>
+                    <span style="font-size:12px;color:var(--text-muted)">
+                        Check the name or barcode, or
+                        <a href="#" onclick="switchTab('inventory')" style="color:var(--navy)">add it to inventory first</a>.
+                    </span>`;
             }
-        } catch(e) {}
+        } catch(e) { showToast('Lookup failed: ' + e.message, 'error'); }
+    }
+
+    // Quick Sell — sell directly from scan result, auto-deducts stock
+    async function quickSell(name, price, cost, currentStock, unit) {
+        const qty = +document.getElementById('quickQty').value;
+        if (!qty || qty <= 0) { showToast('Enter a quantity to sell', 'error'); document.getElementById('quickQty').focus(); return; }
+        if (qty > currentStock) {
+            showToast(`Only ${currentStock} ${unit} in stock — cannot sell ${qty}`, 'error');
+            return;
+        }
+        try {
+            const result = await apiFetch(`/api/finance/sales?user_id=${userId}`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    product_name: name, quantity: qty, unit_price: price,
+                    unit_cost: cost, date: new Date().toISOString().split('T')[0]
+                })
+            });
+            document.getElementById('barcodeInput').value = '';
+            document.getElementById('barcodeResult').style.display = 'none';
+            if (result.inventory_deducted) {
+                const remaining = result.new_stock;
+                const msg = result.low_stock_alert
+                    ? `Sold ${qty} ${unit} of ${name}. ⚠ Only ${remaining} ${unit} left — reorder soon!`
+                    : `Sold ${qty} ${unit} of ${name}. Stock: ${remaining} ${unit} remaining.`;
+                showToast(msg, result.low_stock_alert ? '' : 'success');
+            } else {
+                showToast(`Sale recorded for ${name}.`, 'success');
+            }
+            loadSales();
+            loadInventory();
+        } catch(e) { showToast('Error: ' + e.message, 'error'); }
     }
 
     function handleBarcode(e) { if (e.key === 'Enter') lookupBarcode(); }
