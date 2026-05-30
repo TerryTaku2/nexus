@@ -303,7 +303,10 @@
         </div>
     </div>
 
+    <script src="../static/config.js"></script>
     <script>
+        const GOVT_API = NEXUS_CONFIG.apiUrl;
+
         // User data
         let userData = null;
         let currentUserId = null;
@@ -621,7 +624,7 @@
             const sector = document.getElementById('regSector').value;
 
             try {
-                const response = await fetch('http://localhost:8002/register-company', {
+                const response = await fetch(GOVT_API + '/register-company', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -647,7 +650,7 @@
             const tax = parseFloat(document.getElementById('taxPaid').value);
 
             try {
-                const response = await fetch('http://localhost:8002/file-tax-return', {
+                const response = await fetch(GOVT_API + '/file-tax-return', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -671,7 +674,7 @@
             const productValue = parseFloat(document.getElementById('productValue').value);
 
             try {
-                const response = await fetch('http://localhost:8002/calculate-duty', {
+                const response = await fetch(GOVT_API + '/calculate-duty', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -694,7 +697,7 @@
             const details = document.getElementById('applicantDetails').value;
 
             try {
-                const response = await fetch('http://localhost:8002/e-services/apply', {
+                const response = await fetch(GOVT_API + '/e-services/apply', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

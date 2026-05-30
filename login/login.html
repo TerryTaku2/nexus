@@ -575,11 +575,12 @@
     <!-- ============================================ -->
     <!-- JAVASCRIPT — Python Backend Ready            -->
     <!-- ============================================ -->
+    <script src="../static/config.js"></script>
     <script>
         // ============================================
-        // 🔧 CONFIGURATION — Change this to your Python backend URL
+        // 🔧 CONFIGURATION — edit static/config.js to change API URL
         // ============================================
-        var API_BASE_URL = 'http://localhost:8000/api';
+        var API_BASE_URL = NEXUS_CONFIG.apiUrl + '/api';
 
         // ============ TAB SWITCHING ============
         var tabBtns = document.querySelectorAll('.tab-btn');
@@ -716,9 +717,6 @@
                 btn.textContent = 'Log In';
 
                 if (status === 200 && data.success) {
-                    if (data.token) {
-                        localStorage.setItem('nexus_token', data.token);
-                    }
                     if (data.user) {
                         localStorage.setItem('nexus_user', JSON.stringify(data.user));
                     }
@@ -726,7 +724,7 @@
                     showToast('Welcome back! Redirecting...', 'success');
 
                     setTimeout(function() {
-                        window.location.href = data.redirect || '/dashboard';
+                        window.location.href = data.redirect || '../dashboard/dashboard.html';
                     }, 1000);
 
                 } else if (status === 401) {

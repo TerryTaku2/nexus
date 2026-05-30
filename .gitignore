@@ -2,4 +2,13 @@ Database/Nexus.db
 Pillar 1- Networking/Nexus.db
 __pycache__/
 *.pyc
+*.pyo
+.env
+.venv/
+venv/
+*.zip
+.claude/
+.DS_Store
+Thumbs.db
+desktop.ini
 

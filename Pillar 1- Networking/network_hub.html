@@ -886,7 +886,10 @@
         </div>
     </div>
 
+    <script src="../static/config.js"></script>
     <script>
+        const NET_API = NEXUS_CONFIG.apiUrl;
+
         // User data
         let userData = null;
         let currentUserId = null;
@@ -911,7 +914,7 @@
 
         // WebSocket connection
         function connectWebSocket() {
-            ws = new WebSocket(`ws://localhost:8000/ws/${currentUserId}`);
+            ws = new WebSocket(`${NEXUS_CONFIG.wsUrl}/ws/${currentUserId}`);
             ws.onopen = () => console.log('WebSocket connected');
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
@@ -944,7 +947,7 @@
         // ============ GROUPS FUNCTIONS ============
         async function loadGroups() {
             try {
-                const response = await fetch('/api/groups');
+                const response = await fetch(NET_API + '/api/groups');
                 const data = await response.json();
                 const groupsList = document.getElementById('groupsList');
                 
@@ -970,7 +973,7 @@
 
         async function joinGroup(groupId) {
             try {
-                const response = await fetch('/api/groups/join', {
+                const response = await fetch(NET_API + '/api/groups/join', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: currentUserId, group_id: groupId })
@@ -990,7 +993,7 @@
 
         async function loadMyGroups() {
             try {
-                const response = await fetch('/api/groups');
+                const response = await fetch(NET_API + '/api/groups');
                 const data = await response.json();
                 const myGroupsList = document.getElementById('myGroupsList');
                 
@@ -1062,7 +1065,7 @@
         // ============ POSTS FUNCTIONS ============
         async function loadPosts() {
             try {
-                const response = await fetch('/api/posts');
+                const response = await fetch(NET_API + '/api/posts');
                 const data = await response.json();
                 const postsList = document.getElementById('postsList');
                 
@@ -1099,7 +1102,7 @@
             }
             
             try {
-                const response = await fetch('/api/posts/create', {
+                const response = await fetch(NET_API + '/api/posts/create', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ content, user_id: currentUserId })
@@ -1119,7 +1122,7 @@
         // ============ NEARBY SMEs FUNCTIONS ============
         async function loadNearbySmes() {
             try {
-                const response = await fetch(`/api/nearby-smes?city=${currentCity}&user_id=${currentUserId}`);
+                const response = await fetch(`${NET_API}/api/nearby-smes?city=${currentCity}&user_id=${currentUserId}`);
                 const data = await response.json();
                 const nearbyList = document.getElementById('nearbyList');
                 
@@ -1146,7 +1149,7 @@
         // ============ FOLLOWING FUNCTIONS ============
         async function loadFollowing() {
             try {
-                const response = await fetch(`/api/following/${currentUserId}`);
+                const response = await fetch(`${NET_API}/api/following/${currentUserId}`);
                 const data = await response.json();
                 const followingList = document.getElementById('followingList');
                 
@@ -1170,7 +1173,7 @@
 
         async function followSme(followingId) {
             try {
-                const response = await fetch('/api/follow', {
+                const response = await fetch(NET_API + '/api/follow', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ follower_id: currentUserId, following_id: followingId })
@@ -1212,7 +1215,7 @@
             }
             
             try {
-                const response = await fetch('/api/groups/create', {
+                const response = await fetch(NET_API + '/api/groups/create', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, description, category, location, created_by: currentUserId })

@@ -4,97 +4,126 @@ from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 import sqlite3
 from datetime import datetime
+import hashlib
+import secrets
+import os
 
-app = FastAPI(title="Login API")
+DB_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "Database", "Nexus.db"))
+
+app = FastAPI(title="NeXus Login API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-class SignupRequest(BaseModel):
-    business_name: str = Field(..., min_length=2, max_length=100)
-    owner_name: str = Field(..., min_length=2, max_length=100)
-    phone: str = Field(..., min_length=10, max_length=15)
-    city: str = Field(..., min_length=2, max_length=50)
-    sector: str = Field(..., min_length=2, max_length=50)
-    registration_number: Optional[str] = None
-    employees: Optional[int] = None
-    years_active: Optional[int] = None
-    email: EmailStr
-    password: str = Field(..., min_length=6)
+
+def get_db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def hash_password(password: str) -> str:
+    salt = secrets.token_hex(16)
+    key = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 260_000)
+    return f"pbkdf2:{salt}:{key.hex()}"
+
+
+def verify_password(password: str, stored: str) -> bool:
+    if stored.startswith("pbkdf2:"):
+        try:
+            _, salt, stored_key = stored.split(":", 2)
+            key = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 260_000)
+            return key.hex() == stored_key
+        except Exception:
+            return False
+    # Legacy plain-text fallback — migrated to hash on next successful login
+    return password == stored
+
+
+def safe_user(row) -> dict:
+    d = dict(row)
+    d.pop("password", None)
+    return d
 
 
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
 
-@app.post("/sign_in")
-async def sign_in(login_data: LoginRequest):
-    conn = sqlite3.connect("Database/Nexus.db")
-    conn.row_factory = sqlite3.Row
 
+class SignupRequest(BaseModel):
+    business_name: str = Field(..., min_length=2, max_length=100)
+    owner_name: str = Field(..., min_length=2, max_length=100)
+    phone: str = Field(..., min_length=7, max_length=20)
+    city: str = Field(..., min_length=2, max_length=50)
+    sector: str = Field(..., min_length=2, max_length=50)
+    registration_number: Optional[str] = None
+    employees: Optional[str] = None
+    years_active: Optional[str] = None
+    email: EmailStr
+    password: str = Field(..., min_length=6)
+
+
+@app.post("/api/auth/login")
+async def login(data: LoginRequest):
+    conn = get_db()
     try:
-        user = conn.execute(
-            "SELECT * FROM Users WHERE email = ?",
-            (login_data.email,)
-        ).fetchone()
-
+        user = conn.execute("SELECT * FROM Users WHERE email=?", (data.email,)).fetchone()
         if not user:
             raise HTTPException(status_code=401, detail="Invalid email or password")
 
-        if user["password"] != login_data.password:
+        if not verify_password(data.password, user["password"]):
             raise HTTPException(status_code=401, detail="Invalid email or password")
 
+        # Migrate plain-text password to hashed on successful login
+        if not user["password"].startswith("pbkdf2:"):
+            conn.execute(
+                "UPDATE Users SET password=? WHERE ID=?",
+                (hash_password(data.password), user["ID"])
+            )
+            conn.commit()
 
-        conn.commit()
-
-        return {"message": "Login successful", "user": dict(user)}
-
+        return {
+            "success": True,
+            "user": safe_user(user),
+            "redirect": "../dashboard/dashboard.html"
+        }
     finally:
         conn.close()
 
 
-@app.post("/create_account")
-async def create_account(user_data: SignupRequest):
-    conn = sqlite3.connect("Database/Nexus.db")
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-
+@app.post("/api/auth/register")
+async def register(data: SignupRequest):
+    conn = get_db()
     try:
-        existing = cursor.execute(
-            "SELECT ID FROM Users WHERE email = ?",
-            (user_data.email,)
-        ).fetchone()
-
+        existing = conn.execute("SELECT ID FROM Users WHERE email=?", (data.email,)).fetchone()
         if existing:
-            raise HTTPException(status_code=400, detail="Email already registered")
+            raise HTTPException(status_code=409, detail="An account with this email already exists")
 
-        last_seen = datetime.now()
-
-        cursor.execute("""
+        conn.execute("""
             INSERT INTO Users (
                 business_name, owner_name, phone, city, sector,
                 registration_number, employees, years_active, email, password, last_seen
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?)
         """, (
-            user_data.business_name, user_data.owner_name, user_data.phone,
-            user_data.city, user_data.sector, user_data.registration_number,
-            user_data.employees, user_data.years_active, user_data.email,
-            user_data.password, last_seen
+            data.business_name, data.owner_name, data.phone,
+            data.city, data.sector, data.registration_number,
+            data.employees, data.years_active, data.email,
+            hash_password(data.password), datetime.now()
         ))
-
         conn.commit()
 
-        user = conn.execute(
-            "SELECT * FROM Users WHERE ID = ?", (cursor.lastrowid,)
-        ).fetchone()
-
-        return {"message": "Account created successfully", "user": dict(user)}
-
+        user = conn.execute("SELECT * FROM Users WHERE email=?", (data.email,)).fetchone()
+        return {
+            "success": True,
+            "user": safe_user(user),
+            "redirect": "../dashboard/dashboard.html"
+        }
     except HTTPException:
         raise
     finally:

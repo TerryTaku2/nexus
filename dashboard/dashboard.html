@@ -685,7 +685,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
                 Corp
             </a>
-            <a href="#">
+            <a href="../Toolkit/toolkit.html">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
                 Toolkit
             </a>
@@ -727,7 +727,7 @@
             <a href="../Search/search.html" class="nav-pill default">Search</a>
             <a href="../Pillar 2- Government/government.html" class="nav-pill default">Gov</a>
             <a href="#" class="nav-pill default">Corp</a>
-            <a href="#" class="nav-pill default">Toolkit</a>
+            <a href="../Toolkit/toolkit.html" class="nav-pill default">Toolkit</a>
         </div>
 
         
@@ -794,11 +794,12 @@
         </div>
     </main>
 
+    <script src="../static/config.js"></script>
     <script>
         // ============================================
-        // 🔧 CONFIGURATION — Change to your Python backend URL
+        // 🔧 CONFIGURATION — edit static/config.js to change API URL
         // ============================================
-        var API_BASE_URL = 'http://localhost:5000/api';
+        var API_BASE_URL = NEXUS_CONFIG.apiUrl + '/api';
 
         // ============================================
         // DEMO DATA (Remove when connecting to backend)
