@@ -47,7 +47,7 @@ class ProductCreate(BaseModel):
     reorder_level: float = 0
     cost_price: float = 0
     selling_price: float = 0
-    barcode: Optional[str] = None
+    barcode: str = Field(..., min_length=1)
 
 
 class ProductUpdate(BaseModel):

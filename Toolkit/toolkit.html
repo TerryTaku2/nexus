@@ -529,10 +529,10 @@
             <div class="form-group"><label>Cost Price ($)</label><input type="number" id="p_cost" placeholder="0.00" min="0" step="0.01"></div>
             <div class="form-group"><label>Selling Price ($)</label><input type="number" id="p_sell" placeholder="0.00" min="0" step="0.01"></div>
             <div class="form-group" style="grid-column:1/-1">
-                <label>Barcode (optional)</label>
+                <label>Barcode* <span style="color:#e53e3e;font-size:11px;font-weight:600;text-transform:none">(required — scan the product barcode)</span></label>
                 <div style="display:flex;gap:8px;align-items:center">
-                    <input type="text" id="p_barcode" placeholder="Scan or enter barcode number" style="flex:1">
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="openCameraScanner('p_barcode')" title="Scan with camera">📷 Scan</button>
+                    <input type="text" id="p_barcode" placeholder="Scan barcode with camera or type manually" style="flex:1;border-color:var(--navy)" required>
+                    <button type="button" class="btn btn-primary" onclick="openCameraScanner('p_barcode')" title="Scan with camera">📷 Scan Barcode</button>
                 </div>
             </div>
         </div>
@@ -560,10 +560,10 @@
             <div class="form-group"><label>Cost Price ($)</label><input type="number" id="ep_cost" min="0" step="0.01"></div>
             <div class="form-group"><label>Selling Price ($)</label><input type="number" id="ep_sell" min="0" step="0.01"></div>
             <div class="form-group" style="grid-column:1/-1">
-                <label>Barcode</label>
+                <label>Barcode* <span style="color:#e53e3e;font-size:11px;font-weight:600;text-transform:none">(required)</span></label>
                 <div style="display:flex;gap:8px;align-items:center">
-                    <input type="text" id="ep_barcode" placeholder="Scan or enter barcode number" style="flex:1">
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="openCameraScanner('ep_barcode')" title="Scan with camera">📷 Scan</button>
+                    <input type="text" id="ep_barcode" placeholder="Scan barcode with camera or type manually" style="flex:1;border-color:var(--navy)" required>
+                    <button type="button" class="btn btn-primary" onclick="openCameraScanner('ep_barcode')" title="Scan with camera">📷 Scan Barcode</button>
                 </div>
             </div>
         </div>
@@ -842,7 +842,9 @@
 
     async function saveProduct() {
         const name = document.getElementById('p_name').value.trim();
+        const barcode = document.getElementById('p_barcode').value.trim();
         if (!name) { showToast('Product name is required', 'error'); return; }
+        if (!barcode) { showToast('Barcode is required — use 📷 Scan Barcode to scan the product', 'error'); document.getElementById('p_barcode').focus(); return; }
         try {
             await apiFetch(`/api/inventory/products?user_id=${userId}`, {
                 method: 'POST',
@@ -853,7 +855,7 @@
                     reorder_level: +document.getElementById('p_reorder').value || 0,
                     cost_price: +document.getElementById('p_cost').value || 0,
                     selling_price: +document.getElementById('p_sell').value || 0,
-                    barcode: document.getElementById('p_barcode').value || null
+                    barcode
                 })
             });
             closeModal('addProduct');
@@ -878,6 +880,8 @@
 
     async function updateProduct() {
         const id = document.getElementById('ep_id').value;
+        const barcode = document.getElementById('ep_barcode').value.trim();
+        if (!barcode) { showToast('Barcode is required — use 📷 Scan Barcode to scan the product', 'error'); document.getElementById('ep_barcode').focus(); return; }
         try {
             await apiFetch(`/api/inventory/products/${id}`, {
                 method: 'PUT',
@@ -889,7 +893,7 @@
                     reorder_level: +document.getElementById('ep_reorder').value,
                     cost_price: +document.getElementById('ep_cost').value,
                     selling_price: +document.getElementById('ep_sell').value,
-                    barcode: document.getElementById('ep_barcode').value || null
+                    barcode
                 })
             });
             closeModal('editProduct');
