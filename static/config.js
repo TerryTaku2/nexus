@@ -10,7 +10,7 @@
 
     window.NEXUS_CONFIG = {
         // ⚠ Replace YOUR_RENDER_URL with your Render deployment URL (keep https://)
-        apiUrl: isLocal ? 'http://localhost:8000' : 'https://YOUR_RENDER_URL',
-        wsUrl:  isLocal ? 'ws://localhost:8001'   : 'wss://YOUR_RENDER_URL',
+        apiUrl: isLocal ? 'http://localhost:8000' : 'https://nexus-mw9b.onrender.com',
+        wsUrl:  isLocal ? 'ws://localhost:8001'   : 'wss://nexus-mw9b.onrender.com',
     };
 })();
