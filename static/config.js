@@ -9,8 +9,8 @@
     var isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
 
     window.NEXUS_CONFIG = {
-        // ⚠ Replace YOUR_RENDER_URL with your Render deployment URL (keep https://)
-        apiUrl: isLocal ? 'http://localhost:8000' : 'https://nexus-mw9b.onrender.com',
-        wsUrl:  isLocal ? 'ws://localhost:8001'   : 'wss://nexus-mw9b.onrender.com',
+        // Auto-detects the URL — works on localhost and Render without changes
+        apiUrl: isLocal ? 'http://localhost:8000' : window.location.origin,
+        wsUrl:  isLocal ? 'ws://localhost:8001'   : 'wss://' + window.location.host,
     };
 })();

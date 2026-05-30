@@ -1,7 +1,7 @@
 """
-main.py — NeXus Platform combined API entry point.
-Merges Login, Toolkit, Government, Community, and Search APIs into one app
-so they share a single SQLite database and deploy as one service on Render.
+main.py — NeXus Platform combined API + frontend entry point.
+Merges all APIs into one app and serves the HTML frontend directly.
+Both backend and frontend run on the same Render service.
 """
 import os
 import sys
@@ -11,6 +11,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 from starlette.routing import Mount
 
 app = FastAPI(title="NeXus Platform API", version="1.0.0")
@@ -46,7 +48,7 @@ def _merge(sub_app):
     """Copy HTTP and WebSocket routes from a sub-app into the main app."""
     for route in sub_app.routes:
         if isinstance(route, Mount):
-            continue  # skip StaticFiles mounts — frontend is hosted separately
+            continue  # skip StaticFiles mounts from sub-apps
         if getattr(route, "path", "") in _SKIP_PATHS:
             continue
         app.routes.append(route)
@@ -63,12 +65,28 @@ for mod in [login_mod, toolkit_mod, govt_mod, search_mod, community_mod]:
     _merge(mod.app)
 
 
+# ── Root: redirect to login page ───────────────────────────────────────────
+@app.get("/")
+async def root():
+    return RedirectResponse(url="/login/login.html")
+
+
+# ── Serve HTML frontend folders as static files ────────────────────────────
+app.mount("/static",    StaticFiles(directory=os.path.join(BASE_DIR, "static")),                                      name="static")
+app.mount("/login",     StaticFiles(directory=os.path.join(BASE_DIR, "login"),                  html=True),           name="login")
+app.mount("/dashboard", StaticFiles(directory=os.path.join(BASE_DIR, "dashboard"),              html=True),           name="dashboard")
+app.mount("/Toolkit",   StaticFiles(directory=os.path.join(BASE_DIR, "Toolkit"),                html=True),           name="toolkit")
+app.mount("/finance",   StaticFiles(directory=os.path.join(BASE_DIR, "finance"),                html=True),           name="finance")
+app.mount("/Search",    StaticFiles(directory=os.path.join(BASE_DIR, "Search"),                 html=True),           name="search")
+app.mount("/Pillar 2- Government", StaticFiles(directory=os.path.join(BASE_DIR, "Pillar 2- Government"), html=True),  name="government")
+app.mount("/Pillar 1- Networking", StaticFiles(directory=os.path.join(BASE_DIR, "Pillar 1- Networking"), html=True),  name="networking")
+
+
 # ── Startup: create DB if missing, run migrations, load SMTP, scheduler ────
 @app.on_event("startup")
 async def on_startup():
     db_path = os.path.join(BASE_DIR, "Database", "Nexus.db")
 
-    # Auto-create the database if it doesn't exist (first deploy on Render)
     if not os.path.exists(db_path):
         os.makedirs(os.path.dirname(db_path), exist_ok=True)
         db_spec = importlib.util.spec_from_file_location(
